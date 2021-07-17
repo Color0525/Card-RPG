@@ -1,4 +1,5 @@
-﻿using Cinemachine;
+﻿//using System;
+using Cinemachine;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// 現在の戦闘状態
     /// </summary>
-    [SerializeField] BattleState m_battleState = BattleState.BeginBattle;
+    [SerializeField] BattleState m_battleState = BattleState.BeforeBattle;
     //ユニットの位置
     [SerializeField] Transform m_playerBattlePosition;
     [SerializeField] Transform m_enemyBattlePosition;
@@ -63,7 +64,19 @@ public class BattleManager : MonoBehaviour
     bool m_won = false;
 
 
-    // Start is called before the first frame update
+    //行動ポイント
+    //[SerializeField] BattleStatusControllerBase[] _actionParty;
+    //[SerializeField] int _playersActionPoint = 0; 
+    //[SerializeField] int _enemysActionPoint = 0;
+    //[SerializeField] int _playersActionPointAddAmount = 100;
+    //[SerializeField] int _enemysActionPointAddAmount = 100;
+    //[SerializeField] bool _isPlayersTurn = true;
+    //public int GetActionPoint(bool isPlayersTurn)
+    //{
+    //    return isPlayersTurn ? _playersActionPoint : _enemysActionPoint;
+    //}
+
+
     void Start()
     {
         Cursor.visible = true;
@@ -99,18 +112,31 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(BeginBattle(m_beginBattleTime));
     }
 
-    // Update is called once per frame
     void Update()
     {
         //State管理
         switch (m_battleState)
         {
-            case BattleState.BeginBattle:
+            case BattleState.BeforeBattle:
                 //開始演出
                 break;
 
             case BattleState.StartTurn:
-                //現在ユニット行動開始
+                ////現在ユニット行動開始
+
+                //行動ポイント
+                //if (_isPlayersTurn)
+                //{
+                //    _actionParty = m_playerUnits.ToArray();
+                //    _playersActionPoint += _playersActionPointAddAmount;
+                //}
+                //else
+                //{
+                //    _actionParty = m_enemyUnits.ToArray();
+                //    _enemysActionPoint += _enemysActionPointAddAmount;
+                //}
+                //_actionParty[m_currentNum].GetComponent<BattleStatusControllerBase>().StartAction();
+
                 m_allUnits[m_currentNum].GetComponent<BattleStatusControllerBase>().StartAction();
                 break;
 
@@ -149,9 +175,10 @@ public class BattleManager : MonoBehaviour
 
                 //次のターンへ
                 m_currentNum++;
-                if (m_currentNum >= m_allUnits.Count)
+                if (m_currentNum >= m_allUnits.Count)//_actionParty.Length) 
                 {
                     m_currentNum = 0;
+                    //_isPlayersTurn = _isPlayersTurn ? false : true;
                 }
                 m_battleState = BattleState.StartTurn;
                 break;
@@ -197,7 +224,6 @@ public class BattleManager : MonoBehaviour
     public void EndActingTurn()
     {
         StartCoroutine(DelayAndUpdateState(m_delayAtEndTurn, BattleState.EndTurn));
-        //m_battleState = BattleState.EndTurn;
     }
 
     /// <summary>
@@ -284,7 +310,7 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     enum BattleState
     {
-        BeginBattle,
+        BeforeBattle,
         StartTurn,
         InAction,
         EndTurn,

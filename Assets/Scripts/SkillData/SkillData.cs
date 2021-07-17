@@ -13,6 +13,8 @@ public class SkillData : ScriptableObject
     [SerializeField, Multiline(4)] string m_skillInfo;
     [SerializeField] int m_costSP = 0;
     [SerializeField] float m_powerRate = 1f;
+    //攻撃回数
+    //効果範囲
     [SerializeField] string m_stateName;
     [SerializeField] GameObject m_hitEffectPrefab = null;
     //[SerializeField] AudioClip m_hitAudio;

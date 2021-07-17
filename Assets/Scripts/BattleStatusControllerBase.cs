@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿//using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -38,10 +39,10 @@ public class BattleStatusControllerBase : MonoBehaviour
     public SkillData[] m_HavesSkills { get { return m_havesSkills; } private set { m_havesSkills = value; } }
     public SkillData m_CurrentSkill { get { return m_currentSkill; } set { m_currentSkill = value; } }
 
-    //private void Awake()//StartBattle前のstate実装後Start()に戻す
-    //{
-    //    m_battleManager = FindObjectOfType<BattleManager>();
-    //}
+
+    //追加要素
+    //public event Func<bool, int> ActionPoint;
+    
 
     void Start()
     {
