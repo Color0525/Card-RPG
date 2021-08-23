@@ -697,9 +697,7 @@ MonoBehaviour:
   m_currentSP: 10
   m_power: 20
   m_havesSkills:
-  - {fileID: 11400000, guid: e7b3d4597b74b3241b83a4876067f92e, type: 2}
-  - {fileID: 11400000, guid: 073a168f2eeaa1a4c91d94959e868463, type: 2}
-  - {fileID: 11400000, guid: b9971549972fb2f49bd54c80522bd91a, type: 2}
+  - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
   m_statusIcon: {fileID: 0}
   m_hitParticlePosition: {fileID: 5272943110201845264}
   m_damageTextPosition: {fileID: 5272943110201845264}

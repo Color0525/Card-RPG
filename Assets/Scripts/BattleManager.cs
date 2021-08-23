@@ -242,7 +242,7 @@ public class BattleManager : MonoBehaviour
     /// コマンドセレクトを開始する
     /// </summary>
     /// <param name="actor"></param>
-    public void StartCommandSelect(SkillData[] skills, BattlePlayerController actor)
+    public void StartCommandSelect(NSkillDatabaseScriptable[] skills, BattlePlayerController actor)
     {
         m_commandWindow.SetActive(true);
         foreach (var skill in skills)

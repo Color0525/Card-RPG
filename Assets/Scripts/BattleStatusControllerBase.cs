@@ -17,8 +17,8 @@ public class BattleStatusControllerBase : MonoBehaviour
     [SerializeField] int m_currentSP = 0;
     [SerializeField] int m_power = 3;
     //スキル
-    [SerializeField] SkillData[] m_havesSkills;
-    SkillData m_currentSkill;
+    [SerializeField] NSkillDatabaseScriptable[] m_havesSkills;
+    //Nいらない？//NSkillDatabaseScriptable m_currentSkill;
     //アイコン等
     [SerializeField] StatusIconController m_statusIcon;
     [SerializeField] Transform m_hitParticlePosition;
@@ -36,8 +36,8 @@ public class BattleStatusControllerBase : MonoBehaviour
     public int m_MaxSP { get { return m_maxSP; } private set { m_maxSP = value; } }
     public int m_CurrentSP { get { return m_currentSP; } private set { m_currentSP = value; } }
     public int m_Power { get { return m_power; } private set { m_power = value; } }
-    public SkillData[] m_HavesSkills { get { return m_havesSkills; } private set { m_havesSkills = value; } }
-    public SkillData m_CurrentSkill { get { return m_currentSkill; } set { m_currentSkill = value; } }
+    public NSkillDatabaseScriptable[] m_HavesSkills { get { return m_havesSkills; } private set { m_havesSkills = value; } }
+    //N//public NSkillDatabaseScriptable m_CurrentSkill { get { return m_currentSkill; } set { m_currentSkill = value; } }
 
 
     //追加要素
@@ -75,6 +75,15 @@ public class BattleStatusControllerBase : MonoBehaviour
         m_battleManager.EndActingTurn();
     }
 
+    //N
+    protected void UseSkill(NSkillDatabaseScriptable skill)
+    {
+        //選択機能ができたらここにm_CurrentSkill.Effect(this, targets);
+        UseSP(skill.CostSP);//クールを増やすにする
+        m_battleManager.ActionText(skill.Name); //スキル名を表示
+        m_anim.Play(skill.StateName);//アニメーション起動
+    }
+
     /// <summary>
     /// 指定したスキルのステートをプレイ
     /// </summary>
@@ -86,11 +95,12 @@ public class BattleStatusControllerBase : MonoBehaviour
     }
     public virtual void Hit(BattleStatusControllerBase target = null)// Attackアニメイベント 
     {
-        if (target)
-        {
-            Instantiate(m_CurrentSkill.m_HitEffectPrefab, target.m_hitParticlePosition.position, m_CurrentSkill.m_HitEffectPrefab.transform.rotation);
-            Attack(target, m_CurrentSkill.GetPowerRate(this));
-        }
+        //N
+        //if (target)
+        //{
+        //    Instantiate(m_CurrentSkill.m_HitEffectPrefab, target.m_hitParticlePosition.position, m_CurrentSkill.m_HitEffectPrefab.transform.rotation);
+        //    Attack(target, m_CurrentSkill.GetPowerRate(this));
+        //}
     }
     public virtual void End()//Attackアニメイベント 
     {
@@ -110,7 +120,7 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// ダメージを受ける
     /// </summary>
     /// <param name="power"></param>
-    void Damage(float power)
+    public void Damage(float power)
     {
         int finalDamage = Mathf.CeilToInt(power);
         UpdateHP(-finalDamage);
@@ -123,7 +133,7 @@ public class BattleStatusControllerBase : MonoBehaviour
         }
         else
         {
-            m_anim.SetTrigger("GetHit");
+            m_anim.SetTrigger("GetHit");//UPdateHPへ？
         }
     }
 

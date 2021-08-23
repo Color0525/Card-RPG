@@ -23,10 +23,13 @@ public class BattleEnemyController : BattleStatusControllerBase
     /// </summary>
     void EnemyAction()
     {
+        //N
         //持っているスキルからランダムに使用
-        m_CurrentSkill = m_HavesSkills[Random.Range(0, m_HavesSkills.Length)];
-        //UseSP(m_CurrentSkill.m_CostSP); // 敵はSP消費なし
-        PlayStateAnimator(m_CurrentSkill);
+        NSkillDatabaseScriptable skill = m_HavesSkills[Random.Range(0, m_HavesSkills.Length)];
+        ////UseSP(m_CurrentSkill.m_CostSP); // 敵はSP消費なし
+        skill.Effect(this, FindObjectsOfType<BattlePlayerController>());
+        UseSkill(skill);
+        //PlayStateAnimator(m_CurrentSkill);
     }
 
     //public override void Death(BattleStatusControllerBase deadUnit)
@@ -41,10 +44,9 @@ public class BattleEnemyController : BattleStatusControllerBase
     // アニメイベント
     public override void Hit(BattleStatusControllerBase target = null)
     {
-        BattlePlayerController thisTarget = FindObjectOfType<BattlePlayerController>();
-        base.Hit(thisTarget); 
-        //Instantiate(m_CurrentSkill.m_HitEffectPrefab, target.transform.position, target.transform.rotation);
-        //Attack(target, m_CurrentSkill.GetPowerRate(this));
+        //N
+        //BattlePlayerController thisTarget = FindObjectOfType<BattlePlayerController>();
+        //base.Hit(thisTarget); 
     }
 
     void Dead()

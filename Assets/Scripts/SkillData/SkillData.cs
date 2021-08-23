@@ -9,7 +9,7 @@ using UnityEngine;
 public class SkillData : ScriptableObject
 {
     //データ
-    [SerializeField] string m_skillName;
+    [SerializeField] string m_name;
     [SerializeField, Multiline(4)] string m_skillInfo;
     [SerializeField] int m_costSP = 0;
     [SerializeField] float m_powerRate = 1f;
@@ -21,7 +21,7 @@ public class SkillData : ScriptableObject
     [SerializeField] bool m_fireEffect = false;
 
     //プロパティ
-    public string m_SkillName { get { return m_skillName; } private set { m_skillName = value; } }
+    public string m_SkillName { get { return m_name; } private set { m_name = value; } }
     public string m_SkillInfo { get { return m_skillInfo; } private set { m_skillInfo = value; } }
     public int m_CostSP { get { return m_costSP; } private set { m_costSP = value; } }
     public string m_StateName { get { return m_stateName; } private set { m_stateName = value; } }
