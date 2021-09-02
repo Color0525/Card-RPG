@@ -1,6 +1,8 @@
 ﻿//using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -10,39 +12,64 @@ using UnityEngine;
 public class BattleStatusControllerBase : MonoBehaviour
 {
     //ステータス
-    [SerializeField] string m_name;
-    [SerializeField] int m_maxHP = 10;
-    [SerializeField] int m_currentHP = 10;
+    [SerializeField] string m_name = default;
+    [SerializeField] int m_maxHP = 100;
+    [SerializeField] int m_currentHP = 100;
+    [SerializeField] int m_maxFalterValue = 100;
+    [SerializeField] int m_currentFalterValue = 100;
     [SerializeField] int m_maxSP = 0;
     [SerializeField] int m_currentSP = 0;
-    [SerializeField] int m_power = 3;
+    [SerializeField] float m_coolTime = 0;
+    [SerializeField] int m_attackPower = 20;
+    List<float> m_attackPowerRate = new List<float>();
+    [SerializeField] int m_defensePower = 20;
+    List<float> m_defensePowerRate = new List<float>();
+    //状態効果
+    List<StatusEffectDataBase> m_statesEffects = new List<StatusEffectDataBase>();
+    Action m_timeElapsedStatusEffect = null;
     //スキル
-    [SerializeField] NSkillDatabaseScriptable[] m_havesSkills;
+    [SerializeField] SkillDatabase[] m_havesSkills;
     //Nいらない？//NSkillDatabaseScriptable m_currentSkill;
     //アイコン等
     [SerializeField] StatusIconController m_statusIcon;
     [SerializeField] Transform m_hitParticlePosition;
     [SerializeField] Transform m_damageTextPosition;
     [SerializeField] GameObject m_damageTextPrefab;
-    
-    Animator m_anim;
 
+    Animator m_anim;
     public static BattleManager m_battleManager;
 
-    //プロパティ
-    public string m_Name { get { return m_name; } private set { m_name = value; } }
-    public int m_MaxHP { get { return m_maxHP; } private set { m_maxHP = value; } }
-    public int m_CurrentHP { get { return m_currentHP; } private set { m_currentHP = value; } }
-    public int m_MaxSP { get { return m_maxSP; } private set { m_maxSP = value; } }
-    public int m_CurrentSP { get { return m_currentSP; } private set { m_currentSP = value; } }
-    public int m_Power { get { return m_power; } private set { m_power = value; } }
-    public NSkillDatabaseScriptable[] m_HavesSkills { get { return m_havesSkills; } private set { m_havesSkills = value; } }
+    //get set
+    public string Name { get { return m_name; } }
+    public int MaxHP { get { return m_maxHP; } }
+    public int CurrentHP { get { return m_currentHP; } }
+    public int MaxSP { get { return m_maxSP; } }
+    public int CurrentSP { get { return m_currentSP; } }
+    public float CoolTime { get { return m_coolTime; } }
+    public int AttackPower { get { return m_attackPower; } }
+    public List<float> AttackPowerRate { get { return m_attackPowerRate; } }
+    //public Func<int, float> FuncAttackPowerRate { get; set; } = n => n; 
+    public int TotalAttackPower
+    {
+        get
+        {
+            float totalPower = m_attackPowerRate.Aggregate((float)m_attackPower, (result, n) => result * n);
+            return Mathf.FloorToInt(totalPower);
+        }
+    }
+    public int DefensePower { get { return m_defensePower; } }
+    public List<float> DefensePowerRate { get { return m_defensePowerRate; } }
+    public int TotalDefensePower
+    {
+        get
+        {
+            float totalPower = m_defensePowerRate.Aggregate((float)m_defensePower, (result, n) => result * n);
+            return Mathf.FloorToInt(totalPower);
+        }
+    }
+    public Action TimeElapsedStatusEffect { get { return m_timeElapsedStatusEffect; } set { m_timeElapsedStatusEffect = value; } }
+    public SkillDatabase[] HavesSkills { get { return m_havesSkills; } }
     //N//public NSkillDatabaseScriptable m_CurrentSkill { get { return m_currentSkill; } set { m_currentSkill = value; } }
-
-
-    //追加要素
-    //public event Func<bool, int> ActionPoint;
-    
 
     void Start()
     {
@@ -65,7 +92,25 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// </summary>
     public virtual void StartAction()
     {
-        m_battleManager.StartActingTurn();
+        m_battleManager.StartActingTurn();//GM側でいい?
+
+        //ダウン状態なら解除して怯み値を戻す
+        StatusEffectDataBase down = m_statesEffects.SingleOrDefault(n => n is Down);
+        if (down != null)
+        {
+            RemoveStatesEffect(down);
+            UpdateFalterValue(+m_maxFalterValue);
+        }
+        //NStatusEffectDataBase a = null;
+        //foreach (var statesEffect in m_statesEffects)
+        //{
+        //    if (statesEffect is Down)
+        //    {
+        //        a = statesEffect;
+        //        break;
+        //    }
+        //}
+        //if (a != null) RemoveStatesEffect(a);
     }
     /// <summary>
     /// 行動終了
@@ -76,10 +121,15 @@ public class BattleStatusControllerBase : MonoBehaviour
     }
 
     //N
-    protected void UseSkill(NSkillDatabaseScriptable skill)
+    /// <summary>
+    /// スキルを使う
+    /// </summary>
+    /// <param name="skill"></param>
+    protected void UseSkill(SkillDatabase skill)
     {
         //選択機能ができたらここにm_CurrentSkill.Effect(this, targets);
-        UseSP(skill.CostSP);//クールを増やすにする
+        UpdateSP(-skill.CostSP);
+        UpdateCoolTime(skill.CostTime);
         m_battleManager.ActionText(skill.Name); //スキル名を表示
         m_anim.Play(skill.StateName);//アニメーション起動
     }
@@ -107,34 +157,164 @@ public class BattleStatusControllerBase : MonoBehaviour
         EndAction();
     }
 
+    //N
+    ///// <summary>
+    ///// ダメージを与える////このタイミングでなにかするなら必要
+    ///// </summary>
+    ///// <param name="target"></param>
+    //public void Attack(BattleStatusControllerBase target, float powerRate)
+    //{
+    //    target.Damage(m_power * powerRate);
+    //}
     /// <summary>
-    /// ダメージを与える
+    /// 最終的に受けるダメージ量を返す
     /// </summary>
-    /// <param name="target"></param>
-    public void Attack(BattleStatusControllerBase target, float powerRate)
+    /// <param name="damage"></param>
+    /// <param name="enemyTotalattackPower"></param>
+    /// <returns></returns>
+    public int GetReceiveDamage(float damage, int enemyTotalattackPower)
     {
-        target.Damage(m_power * powerRate);
+        //耐性による倍率も追加したい
+        float rateByStatus = (float)Mathf.Max(1, enemyTotalattackPower) / Mathf.Max(1, TotalDefensePower);//ステータスによる倍率//値が大きすぎるのを防ぐ＆0除算にならないように最低1
+        return Mathf.CeilToInt(damage * rateByStatus);//最小でも1ダメージは与えたいので切り上げ
     }
-
     /// <summary>
     /// ダメージを受ける
     /// </summary>
-    /// <param name="power"></param>
-    public void Damage(float power)
+    /// <param name="value"></param>
+    public void Damage(int value)
     {
-        int finalDamage = Mathf.CeilToInt(power);
-        UpdateHP(-finalDamage);
-        DamageText(m_damageTextPosition.position, finalDamage);
+        UpdateHP(-value);
+        DamageText(m_damageTextPosition.position, value);
 
         if (m_currentHP == 0)
         {
-            m_anim.SetBool("Dead", true);
+            m_anim.SetBool("Dead", true);//  Death()に入れる？
             Death();
         }
         else
         {
-            m_anim.SetTrigger("GetHit");//UPdateHPへ？
+            m_anim.SetTrigger("GetHit");
         }
+    }
+    /// <summary>
+    /// 怯み値の減少
+    /// </summary>
+    /// <param name="value"></param>
+    public void DecreaseFalterValue(int value)
+    {
+        if (m_currentFalterValue == 0) return;//すでに0なら減少しない
+
+        UpdateFalterValue(-value);
+
+        if (m_currentFalterValue == 0)
+        {
+            AddStatesEffect(new Down(this));//NStatusEffectDataBase.ID.Down);//ダウンする
+            //ダウンアニメ//割れるパーティクル演出
+        }
+    }
+    ///// <summary>
+    ///// SPが減少
+    ///// </summary>
+    ///// <param name="cost"></param>
+    //public void UseSP(int cost)
+    //{
+    //    UpdateSP(-cost);
+    //}
+    /// <summary>
+    /// クールタイム増加
+    /// </summary>
+    /// <param name="value"></param>
+    public void IncreaseCoolTime(float value)
+    {
+        UpdateCoolTime(value);
+    }
+
+    /// <summary>
+    /// 時間経過
+    /// </summary>
+    public void TimeElapsed()
+    {
+        UpdateCoolTime(-1);
+        if (m_timeElapsedStatusEffect != null)
+        {
+            m_timeElapsedStatusEffect();//状態変化listの経過時間も減らす
+        }
+    }
+
+    /// <summary>
+    /// HPを更新
+    /// </summary>
+    /// <param name="value"></param>
+    void UpdateHP(int value = 0)
+    {
+        int before = m_currentHP;
+        m_currentHP = Mathf.Clamp(m_currentHP + value, 0, m_maxHP);
+        if (before != m_currentHP)
+        {
+            m_statusIcon.UpdateHPBar(m_maxHP, m_currentHP);
+        }
+    }
+    /// <summary>
+    /// 怯み値を更新
+    /// </summary>
+    /// <param name="value"></param>
+    void UpdateFalterValue(int value = 0)
+    {
+        //int before = m_falterValue;
+        m_currentFalterValue = Mathf.Clamp(m_currentFalterValue + value, 0, m_maxFalterValue);
+        //if (before != m_falterValue)
+        //{
+        //    m_statusIcon.UpdateFalterValueに//0ならゲージが破壊演出
+        //}
+    }
+    /// <summary>
+    /// SPを更新
+    /// </summary>
+    /// <param name="value"></param>
+    void UpdateSP(int value = 0)
+    {
+        int before = m_currentSP;
+        m_currentSP = Mathf.Clamp(m_currentSP + value, 0, m_maxSP);
+        if (before != m_currentSP)
+        {
+            m_statusIcon.UpdateSPBar(m_maxSP, m_currentSP);
+        }
+    }
+    /// <summary>
+    /// クールタイムを更新
+    /// </summary>
+    /// <param name="value"></param>
+    void UpdateCoolTime(float value = 0)
+    {
+        //float before = m_coolTime;
+        m_coolTime += value;
+        //if (before != m_coolTime)
+        //{
+        //    m_statusIcon.UpdateCoolTimeBarに
+        //}
+    }
+
+    /// <summary>
+    /// 状態効果を新しく持つ
+    /// </summary>
+    /// <param name="effect"></param>
+    public void AddStatesEffect(StatusEffectDataBase effect)
+    {
+        //NStatusEffectDataBase effect = new NStatusEffectDataBase(this, id, effectTime, effectPower);
+        m_statesEffects.Add(effect);
+        effect.AddEffect();
+        Debug.Log($"{this.m_name} {effect.ToString()} 付与");
+    }
+    /// <summary>
+    /// 状態効果を削除する
+    /// </summary>
+    /// <param name="effect"></param>
+    public void RemoveStatesEffect(StatusEffectDataBase effect)
+    {
+        effect.RemoveEffect();
+        m_statesEffects.Remove(effect);
+        Debug.Log($"{this.m_name} {effect.ToString()} 解除");
     }
 
     /// <summary>
@@ -152,44 +332,6 @@ public class BattleStatusControllerBase : MonoBehaviour
             m_battleManager.DeletePlayerList(this.gameObject.GetComponent<BattlePlayerController>());
         }
     }
-
-    /// <summary>
-    /// SPを消費する
-    /// </summary>
-    /// <param name="cost"></param>
-    public void UseSP(int cost)
-    {
-        UpdateSP(-cost);
-    }
-
-    /// <summary>
-    /// HPを更新
-    /// </summary>
-    /// <param name="value"></param>
-    void UpdateHP(int value = 0)
-    {
-        int current = m_currentHP;
-        m_currentHP = Mathf.Clamp(m_currentHP + value, 0, m_maxHP);
-        if (current != m_currentHP)
-        {
-            m_statusIcon.UpdateHPBar(m_maxHP, m_currentHP);
-        }
-    }
-
-    /// <summary>
-    /// SPを更新
-    /// </summary>
-    /// <param name="value"></param>
-    void UpdateSP(int value = 0)
-    {
-        int current = m_currentSP;
-        m_currentSP = Mathf.Clamp(m_currentSP + value, 0, m_maxSP);
-        if (current != m_currentSP)
-        {
-            m_statusIcon.UpdateSPBar(m_maxSP, m_currentSP);
-        }
-    }
-
     /// <summary>
     /// DamageTextを出す
     /// </summary>

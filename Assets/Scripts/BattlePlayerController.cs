@@ -23,13 +23,13 @@ public class BattlePlayerController : BattleStatusControllerBase
     public override void StartAction()
     {
         base.StartAction();
-        m_battleManager.StartCommandSelect(m_HavesSkills, this);
+        m_battleManager.StartCommandSelect(HavesSkills, this);
     }
 
     /// <summary>
     /// 行動コマンド(Player)
     /// </summary>
-    public void PlayerActionCommand(NSkillDatabaseScriptable skill)
+    public void PlayerActionCommand(SkillDatabase skill)
     {
         m_battleManager.EndCommandSelect();
         //N

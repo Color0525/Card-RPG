@@ -34,7 +34,7 @@ public class QuestData : ScriptableObject
     /// <returns></returns>
     public string QuestTaskText()
     {
-        return $"{m_target.GetComponent<BattleStatusControllerBase>().m_Name}を{m_taskValue}体倒す {m_taskCount}/{m_taskValue}";
+        return $"{m_target.GetComponent<BattleStatusControllerBase>().Name}を{m_taskValue}体倒す {m_taskCount}/{m_taskValue}";
     }
 
     /// <summary>

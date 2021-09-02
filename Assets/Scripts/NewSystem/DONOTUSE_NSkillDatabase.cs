@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NSkillDatabase : MonoBehaviour
+public class DONOTUSE_NSkillDatabase : MonoBehaviour
 {
     public enum ID
     {

@@ -10,6 +10,6 @@ public class LastSmashSkillData : SkillData
 {
     public override float GetPowerRate(BattleStatusControllerBase status)
     {
-        return (float)status.m_MaxHP / (float)status.m_CurrentHP;
+        return (float)status.MaxHP / (float)status.CurrentHP;
     }
 }

@@ -25,7 +25,7 @@ public class BattleEnemyController : BattleStatusControllerBase
     {
         //N
         //持っているスキルからランダムに使用
-        NSkillDatabaseScriptable skill = m_HavesSkills[Random.Range(0, m_HavesSkills.Length)];
+        SkillDatabase skill = HavesSkills[Random.Range(0, HavesSkills.Length)];
         ////UseSP(m_CurrentSkill.m_CostSP); // 敵はSP消費なし
         skill.Effect(this, FindObjectsOfType<BattlePlayerController>());
         UseSkill(skill);

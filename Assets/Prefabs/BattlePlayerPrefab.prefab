@@ -693,11 +693,19 @@ MonoBehaviour:
   m_name: "\u30E6\u30CB\u30C6\u30A3\u3061\u3083\u3093"
   m_maxHP: 100
   m_currentHP: 100
-  m_maxSP: 10
-  m_currentSP: 10
-  m_power: 20
+  m_maxFalterValue: 100
+  m_currentFalterValue: 100
+  m_maxSP: 20
+  m_currentSP: 20
+  m_coolTime: 0
+  m_attackPower: 20
+  m_defensePower: 20
   m_havesSkills:
   - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
+  - {fileID: 11400000, guid: e69b729f0eff21c4ca8eed118a303df3, type: 2}
+  - {fileID: 11400000, guid: 39b429be2da506541bc16782f0c7c003, type: 2}
+  - {fileID: 11400000, guid: 7db498c829c4eff4aa7b21c60117b6b9, type: 2}
+  - {fileID: 11400000, guid: 29d8b7594a1c1fe4c96033ced53d69af, type: 2}
   m_statusIcon: {fileID: 0}
   m_hitParticlePosition: {fileID: 5272943110201845264}
   m_damageTextPosition: {fileID: 5272943110201845264}

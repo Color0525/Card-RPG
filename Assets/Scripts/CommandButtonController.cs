@@ -14,7 +14,7 @@ public class CommandButtonController : MonoBehaviour
     [SerializeField] AudioClip m_ngSE;
 
     //スキル
-    NSkillDatabaseScriptable m_currentSkill;
+    SkillDatabase m_currentSkill;
     //行動者
     BattlePlayerController m_actor;
     //テキスト
@@ -36,7 +36,7 @@ public class CommandButtonController : MonoBehaviour
     /// <param name="skill"></param>
     /// <param name="actor"></param>
     /// <param name="text"></param>
-    public void SetupCammand(NSkillDatabaseScriptable skill, BattlePlayerController actor, TextMeshProUGUI text)
+    public void SetupCammand(SkillDatabase skill, BattlePlayerController actor, TextMeshProUGUI text)
     {
         //N
         m_currentSkill = skill;
@@ -70,7 +70,7 @@ public class CommandButtonController : MonoBehaviour
     /// </summary>
     public void PlayCommand()
     {
-        if (m_currentSkill.CostSP <= m_actor.m_CurrentSP)
+        if (m_currentSkill.CostSP <= m_actor.CurrentSP)
         {
             m_actor.PlayerActionCommand(m_currentSkill);
         }

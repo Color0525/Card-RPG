@@ -119,11 +119,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4982213979340719755, guid: edcdafc91e0baea4cbd2476524a8d456,
         type: 3}
-      propertyPath: m_havesSkills.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4982213979340719755, guid: edcdafc91e0baea4cbd2476524a8d456,
-        type: 3}
       propertyPath: m_maxHP
       value: 200
       objectReference: {fileID: 0}
@@ -142,12 +137,6 @@ PrefabInstance:
       propertyPath: m_name
       value: "\u30D3\u30C3\u30B0\u30B9\u30E9\u30A4\u30E0"
       objectReference: {fileID: 0}
-    - target: {fileID: 4982213979340719755, guid: edcdafc91e0baea4cbd2476524a8d456,
-        type: 3}
-      propertyPath: m_havesSkills.Array.data[0]
-      value: 
-      objectReference: {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf,
-        type: 2}
     - target: {fileID: 4993672648434196426, guid: edcdafc91e0baea4cbd2476524a8d456,
         type: 3}
       propertyPath: m_Name

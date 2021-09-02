@@ -27,8 +27,8 @@ public class StatusIconController : MonoBehaviour
     /// <param name="currentSP"></param>
     public void SetupStatus(BattleStatusControllerBase status)
     {
-        UpdateHPBar(status.m_MaxHP, status.m_CurrentHP);
-        UpdateSPBar(status.m_MaxSP, status.m_CurrentSP);
+        UpdateHPBar(status.MaxHP, status.CurrentHP);
+        UpdateSPBar(status.MaxSP, status.CurrentSP);
     }
 
     /// <summary>

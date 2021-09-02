@@ -10,11 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fca7928799e310c4b91710e299bd5c11, type: 3}
-  m_Name: NewSkillDatabaseAttack
+  m_Name: N_Poison
   m_EditorClassIdentifier: 
-  m_id: 0
-  m_name: "\u30A2\u30BF\u30C3\u30AF"
-  m_info: "\u76F8\u624B\u306B\u5C0F\u30C0\u30E1\u30FC\u30B8"
-  m_costSP: 0
-  m_powerRate: 1
+  m_id: 3
+  m_name: "\u30DD\u30A4\u30BA\u30F3"
+  m_info: "\u30AF\u30FC\u30EB100\u3002\n100\u30AB\u30A6\u30F3\u30C8\u306E\u9593\n\u76F8\u624B\u3092\u6BD2\u72B6\u614B\u306B\u3059\u308B\u3002"
+  m_costSP: 5
+  m_costTime: 100
+  m_powerRate: 0
+  m_falterPower: 0
+  m_effectTime: 100
+  m_effectRete: 0
   m_stateName: Attack

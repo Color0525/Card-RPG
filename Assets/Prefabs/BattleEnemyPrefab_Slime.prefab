@@ -228,9 +228,13 @@ MonoBehaviour:
   m_name: "\u30B9\u30E9\u30A4\u30E0"
   m_maxHP: 50
   m_currentHP: 50
+  m_maxFalterValue: 100
+  m_currentFalterValue: 100
   m_maxSP: 0
   m_currentSP: 0
-  m_power: 15
+  m_coolTime: 0
+  m_attackPower: 20
+  m_defensePower: 15
   m_havesSkills:
   - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
   m_statusIcon: {fileID: 1187049678646948430}

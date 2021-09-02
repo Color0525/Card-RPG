@@ -13,6 +13,17 @@ using UnityEngine.Playables;
 public class BattleManager : MonoBehaviour
 {
     /// <summary>
+    /// 戦闘状態
+    /// </summary>
+    enum BattleState
+    {
+        BeforeBattle,
+        StartTurn,
+        InAction,
+        EndTurn,
+        AfterBattle,
+    }
+    /// <summary>
     /// 現在の戦闘状態
     /// </summary>
     [SerializeField] BattleState m_battleState = BattleState.BeforeBattle;
@@ -33,6 +44,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField] PlayableDirector m_loseCutScene;
     //ディレイ
     [SerializeField] float m_delayAtEndTurn = 1f;
+    
+    //N//タイムラインの経過速度
+    [SerializeField] float m_timeUpdateInterval = 0.1f;
+    float m_timeCount = 0;
 
     /// <summary>
     ///戦うプレイヤー
@@ -63,23 +78,9 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     bool m_won = false;
 
-
-    //行動ポイント
-    //[SerializeField] BattleStatusControllerBase[] _actionParty;
-    //[SerializeField] int _playersActionPoint = 0; 
-    //[SerializeField] int _enemysActionPoint = 0;
-    //[SerializeField] int _playersActionPointAddAmount = 100;
-    //[SerializeField] int _enemysActionPointAddAmount = 100;
-    //[SerializeField] bool _isPlayersTurn = true;
-    //public int GetActionPoint(bool isPlayersTurn)
-    //{
-    //    return isPlayersTurn ? _playersActionPoint : _enemysActionPoint;
-    //}
-
-
     void Start()
     {
-        Cursor.visible = true;
+        Cursor.visible = true; //カーソル表示
 
         StartCoroutine(SceneController.m_Instance.FadeIn());
 
@@ -117,35 +118,37 @@ public class BattleManager : MonoBehaviour
         //State管理
         switch (m_battleState)
         {
-            case BattleState.BeforeBattle:
-                //開始演出
+            case BattleState.BeforeBattle://開始演出
                 break;
 
-            case BattleState.StartTurn:
-                ////現在ユニット行動開始
+            case BattleState.StartTurn://現在ユニット行動開始//N//待機時間に名前変更？
+                m_timeCount += Time.deltaTime;
+                if (m_timeCount > m_timeUpdateInterval) 
+                {
+                    m_timeCount = 0;
 
-                //行動ポイント
-                //if (_isPlayersTurn)
-                //{
-                //    _actionParty = m_playerUnits.ToArray();
-                //    _playersActionPoint += _playersActionPointAddAmount;
-                //}
-                //else
-                //{
-                //    _actionParty = m_enemyUnits.ToArray();
-                //    _enemysActionPoint += _enemysActionPointAddAmount;
-                //}
-                //_actionParty[m_currentNum].GetComponent<BattleStatusControllerBase>().StartAction();
+                    foreach (var unit in m_allUnits)
+                    {
+                        //クールタイムはflootにして、0以下になるようにする(状態異常やスキルなどでクール速度半減、倍増、などあるから)
+                        if (unit.CoolTime <= 0) 
+                        {
+                            unit.StartAction();
+                            return;
+                        }
+                    }
+                    foreach (var unit in m_allUnits)
+                    {
+                        unit.TimeElapsed();
+                    }
+                }
 
-                m_allUnits[m_currentNum].GetComponent<BattleStatusControllerBase>().StartAction();
+                //N//m_allUnits[m_currentNum].StartAction();
                 break;
 
-            case BattleState.InAction:
-                //行動中
+            case BattleState.InAction://行動中
                 break;
 
-            case BattleState.EndTurn:
-                //戦闘終了したときResultTimelineを再生しAfterBattleへ
+            case BattleState.EndTurn://戦闘終了したときResultTimelineを再生しAfterBattleへ
                 if (!m_inBattle)
                 {
                     if (m_won)
@@ -183,14 +186,12 @@ public class BattleManager : MonoBehaviour
                 m_battleState = BattleState.StartTurn;
                 break;
 
-            case BattleState.AfterBattle:
-                //クリックでMapシーンへ
+            case BattleState.AfterBattle://クリックでMapシーンへ
                 if (Input.anyKeyDown)
                 {
                     SceneController.m_Instance.CallLoadMapScene(!m_won);
                 }
                 break;
-
             default:
                 break;
         }
@@ -223,7 +224,7 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     public void EndActingTurn()
     {
-        StartCoroutine(DelayAndUpdateState(m_delayAtEndTurn, BattleState.EndTurn));
+        StartCoroutine(DelayAndUpdateState(m_delayAtEndTurn, BattleState.EndTurn));//コルーチンやめてEndTurのカウントでディレイをかける
     }
 
     /// <summary>
@@ -242,7 +243,7 @@ public class BattleManager : MonoBehaviour
     /// コマンドセレクトを開始する
     /// </summary>
     /// <param name="actor"></param>
-    public void StartCommandSelect(NSkillDatabaseScriptable[] skills, BattlePlayerController actor)
+    public void StartCommandSelect(SkillDatabase[] skills, BattlePlayerController actor)
     {
         m_commandWindow.SetActive(true);
         foreach (var skill in skills)
@@ -303,17 +304,5 @@ public class BattleManager : MonoBehaviour
         go.GetComponentInChildren<TextMeshProUGUI>().text = actionText;
         DOTween.To(() => go.transform.localPosition - new Vector3(500, 0, 0), x => go.transform.localPosition = x, go.transform.localPosition, 0.05f);
         Destroy(go, 1f);
-    }
-
-    /// <summary>
-    /// 戦闘状態
-    /// </summary>
-    enum BattleState
-    {
-        BeforeBattle,
-        StartTurn,
-        InAction,
-        EndTurn,
-        AfterBattle,
     }
 }
