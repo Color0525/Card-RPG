@@ -10,7 +10,7 @@ public class EnemyGenerater : MonoBehaviour
     /// <summary>
     /// 出現させるEnemyのPrefub
     /// </summary>
-    [SerializeField] GameObject m_mapEnemyPrefab;
+    [SerializeField] GameObject m_mapEnemyPrefab = default;
     /// <summary>
     /// 出現数
     /// </summary>
@@ -26,7 +26,7 @@ public class EnemyGenerater : MonoBehaviour
     /// <summary>
     /// プレイヤーの位置
     /// </summary>
-    [SerializeField] Transform m_playerTransform;
+    [SerializeField] Transform m_playerTransform = default;
     /// <summary>
     /// 生成済みかどうか
     /// </summary>

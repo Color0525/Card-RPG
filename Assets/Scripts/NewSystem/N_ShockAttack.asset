@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fca7928799e310c4b91710e299bd5c11, type: 3}
-  m_Name: N_LastSmash
+  m_Name: N_ShockAttack
   m_EditorClassIdentifier: 
-  m_id: 30
-  m_name: "\u30E9\u30B9\u30C8\u30D1\u30EF\u30FC\u30A2\u30BF\u30C3\u30AF"
-  m_info: "\u30AF\u30FC\u30EB120\u3002\n\u81EA\u8EAB\u306E\u4F53\u529B\u304C\u5C11\u306A\u3044\u307B\u3069\n\u9AD8\u5A01\u529B\u306E\u30C0\u30E1\u30FC\u30B8\u3002"
-  m_costSP: 6
-  m_costTime: 120
-  m_powerRate: 1
-  m_falterPower: 0
+  m_id: 20
+  m_name: "\u30B7\u30E7\u30C3\u30AF\u30A2\u30BF\u30C3\u30AF"
+  m_info: "\u30AF\u30FC\u30EB50\u3002\n\u653B\u6483\u529B\xD70.5\u30C0\u30E1\u30FC\u30B8\u3002\n\u30AC\u30FC\u30C9\u309250\u524A\u308B\u3002"
+  m_costSP: 2
+  m_costTime: 50
+  m_powerRate: 0.5
+  m_falterPower: 50
   m_effectTime: -1
   m_effectRete: 0
   m_stateName: Attack

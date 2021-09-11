@@ -31,11 +31,11 @@ public class SceneController : MonoBehaviour
 
     [SerializeField] string m_mapSceneName = "Map";
     [SerializeField] string m_battleSceneName = "Battle";
-    [SerializeField] GameObject m_fadePanelPrefab;
+    [SerializeField] GameObject m_fadePanelPrefab = default;
     [SerializeField] float m_fadeTime = 1f;
-    [SerializeField] GameObject m_encountEffectPrefab;
-    [SerializeField] GameObject m_slideEffectPrefab;
-    [SerializeField] QuestData m_initialQuest;
+    [SerializeField] GameObject m_encountEffectPrefab = default;
+    [SerializeField] GameObject m_slideEffectPrefab = default;
+    [SerializeField] QuestData m_initialQuest = default;
 
     void Awake()
     {

@@ -237,8 +237,8 @@ MonoBehaviour:
   m_defensePower: 15
   m_havesSkills:
   - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
+  - {fileID: 11400000, guid: ebb8bcf936f806945bffa767bc8343bd, type: 2}
   m_statusIcon: {fileID: 1187049678646948430}
-  m_hitParticlePosition: {fileID: 6274321756026501440}
   m_damageTextPosition: {fileID: 6274321756026501440}
   m_damageTextPrefab: {fileID: 8046955857244188895, guid: 5a36d68f2439e044b90c0a341c5e5732,
     type: 3}

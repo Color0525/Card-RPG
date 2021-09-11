@@ -12,10 +12,10 @@ public class StatusIconController : MonoBehaviour
 {
     [SerializeField] bool m_noMoveEffect = true;
     float m_effectTime = 0.2f;
-    [SerializeField] Slider m_HPBar;
-    [SerializeField] TextMeshProUGUI m_HPValue = null;
-    [SerializeField] Slider m_SPBar = null;
-    [SerializeField] TextMeshProUGUI m_SPValue = null;
+    [SerializeField] Slider m_HPBar = default;
+    [SerializeField] TextMeshProUGUI m_HPValue = default;
+    [SerializeField] Slider m_SPBar = default;
+    [SerializeField] TextMeshProUGUI m_SPValue = default;
 
     /// <summary>
     /// ステータスアイコンのセットアップ

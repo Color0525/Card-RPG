@@ -24,20 +24,20 @@ public class BattleStatusControllerBase : MonoBehaviour
     List<float> m_attackPowerRate = new List<float>();
     [SerializeField] int m_defensePower = 20;
     List<float> m_defensePowerRate = new List<float>();
+    bool m_alive = true;
     //状態効果
     List<StatusEffectDataBase> m_statesEffects = new List<StatusEffectDataBase>();
     Action m_timeElapsedStatusEffect = null;
     //スキル
-    [SerializeField] SkillDatabase[] m_havesSkills;
+    [SerializeField] protected SkillDatabase[] m_havesSkills;
     //Nいらない？//NSkillDatabaseScriptable m_currentSkill;
     //アイコン等
-    [SerializeField] StatusIconController m_statusIcon;
-    [SerializeField] Transform m_hitParticlePosition;
-    [SerializeField] Transform m_damageTextPosition;
-    [SerializeField] GameObject m_damageTextPrefab;
+    [SerializeField] StatusIconController m_statusIcon = default;
+    //[SerializeField] Transform m_hitParticlePosition = default;
+    [SerializeField] Transform m_damageTextPosition = default;
+    [SerializeField] GameObject m_damageTextPrefab = default;
 
     Animator m_anim;
-    public static BattleManager m_battleManager;
 
     //get set
     public string Name { get { return m_name; } }
@@ -57,7 +57,7 @@ public class BattleStatusControllerBase : MonoBehaviour
             return Mathf.FloorToInt(totalPower);
         }
     }
-    public int DefensePower { get { return m_defensePower; } }
+    //public int DefensePower { get { return m_defensePower; } }
     public List<float> DefensePowerRate { get { return m_defensePowerRate; } }
     public int TotalDefensePower
     {
@@ -67,13 +67,13 @@ public class BattleStatusControllerBase : MonoBehaviour
             return Mathf.FloorToInt(totalPower);
         }
     }
+    public bool Alive { get { return m_alive; } }
     public Action TimeElapsedStatusEffect { get { return m_timeElapsedStatusEffect; } set { m_timeElapsedStatusEffect = value; } }
-    public SkillDatabase[] HavesSkills { get { return m_havesSkills; } }
+    //public SkillDatabase[] HavesSkills { get { return m_havesSkills; } }
     //N//public NSkillDatabaseScriptable m_CurrentSkill { get { return m_currentSkill; } set { m_currentSkill = value; } }
 
     void Start()
     {
-        m_battleManager = FindObjectOfType<BattleManager>();
         m_anim = GetComponent<Animator>();
         m_statusIcon.SetupStatus(this);
     }
@@ -90,12 +90,12 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// <summary>
     /// 行動開始
     /// </summary>
-    public virtual void StartAction()
+    public virtual void BeginAction()
     {
-        m_battleManager.StartActingTurn();//GM側でいい?
+        //N//m_battleManager.BeginAction();//GM側でいい?
 
         //ダウン状態なら解除して怯み値を戻す
-        StatusEffectDataBase down = m_statesEffects.SingleOrDefault(n => n is Down);
+        StatusEffectDataBase down = m_statesEffects.SingleOrDefault(x => x is Down);
         if (down != null)
         {
             RemoveStatesEffect(down);
@@ -117,7 +117,7 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// </summary>
     void EndAction()
     {
-        m_battleManager.EndActingTurn();
+        BattleManager.Instance.ReturnWaitTime();
     }
 
     //N
@@ -130,7 +130,7 @@ public class BattleStatusControllerBase : MonoBehaviour
         //選択機能ができたらここにm_CurrentSkill.Effect(this, targets);
         UpdateSP(-skill.CostSP);
         UpdateCoolTime(skill.CostTime);
-        m_battleManager.ActionText(skill.Name); //スキル名を表示
+        BattleManager.Instance.ShowActionText(skill.Name); //スキル名を表示
         m_anim.Play(skill.StateName);//アニメーション起動
     }
 
@@ -140,12 +140,12 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// <param name="sutateName"></param>
     public void PlayStateAnimator(SkillData skill)
     {
-        m_battleManager.ActionText(skill.m_SkillName);
+        BattleManager.Instance.ShowActionText(skill.m_SkillName);
         m_anim.Play(skill.m_StateName);
     }
     public virtual void Hit(BattleStatusControllerBase target = null)// Attackアニメイベント 
     {
-        //N
+        //N　一時的にアニメーション開始と同時にダメージにしている
         //if (target)
         //{
         //    Instantiate(m_CurrentSkill.m_HitEffectPrefab, target.m_hitParticlePosition.position, m_CurrentSkill.m_HitEffectPrefab.transform.rotation);
@@ -321,17 +321,21 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// 死亡する
     /// </summary>
     /// <param name="deadUnit"></param>
-    public virtual void Death()
+    public virtual void Death() //Damageメソッド内に入れる？
     {
-        if (this.gameObject.GetComponent<BattleEnemyController>())
-        {
-            m_battleManager.DeleteEnemyList(this.gameObject.GetComponent<BattleEnemyController>());
-        }
-        else if (this.gameObject.GetComponent<BattlePlayerController>())
-        {
-            m_battleManager.DeletePlayerList(this.gameObject.GetComponent<BattlePlayerController>());
-        }
+        m_alive = false;
+        BattleManager.Instance.CheckWinOrLose(this);
+
+        //if (this.gameObject.GetComponent<BattleEnemyController>())
+        //{
+        //    m_battleManager.DeleteEnemyList(this.gameObject.GetComponent<BattleEnemyController>());
+        //}
+        //else if (this.gameObject.GetComponent<BattlePlayerController>())
+        //{
+        //    m_battleManager.DeletePlayerList(this.gameObject.GetComponent<BattlePlayerController>());
+        //}
     }
+
     /// <summary>
     /// DamageTextを出す
     /// </summary>

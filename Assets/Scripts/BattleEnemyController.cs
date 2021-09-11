@@ -7,14 +7,14 @@ using UnityEngine;
 /// </summary>
 public class BattleEnemyController : BattleStatusControllerBase
 {
-    [SerializeField] GameObject m_DeadParticlePrefab;
+    [SerializeField] GameObject m_DeadParticlePrefab = default;
 
     /// <summary>
     /// 行動(敵)
     /// </summary>
-    public override void StartAction()
+    public override void BeginAction()
     {
-        base.StartAction();
+        base.BeginAction();
         EnemyAction();
     }
 
@@ -25,7 +25,7 @@ public class BattleEnemyController : BattleStatusControllerBase
     {
         //N
         //持っているスキルからランダムに使用
-        SkillDatabase skill = HavesSkills[Random.Range(0, HavesSkills.Length)];
+        SkillDatabase skill = m_havesSkills[Random.Range(0, m_havesSkills.Length)];
         ////UseSP(m_CurrentSkill.m_CostSP); // 敵はSP消費なし
         skill.Effect(this, FindObjectsOfType<BattlePlayerController>());
         UseSkill(skill);
@@ -42,12 +42,12 @@ public class BattleEnemyController : BattleStatusControllerBase
     //}
 
     // アニメイベント
-    public override void Hit(BattleStatusControllerBase target = null)
-    {
-        //N
-        //BattlePlayerController thisTarget = FindObjectOfType<BattlePlayerController>();
-        //base.Hit(thisTarget); 
-    }
+    //N
+    //public override void Hit(BattleStatusControllerBase target = null)
+    //{
+    //    BattlePlayerController thisTarget = FindObjectOfType<BattlePlayerController>();
+    //    base.Hit(thisTarget);
+    //}
 
     void Dead()
     {

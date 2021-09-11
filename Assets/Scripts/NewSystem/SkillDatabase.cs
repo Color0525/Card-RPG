@@ -8,10 +8,16 @@ public class SkillDatabase : ScriptableObject
 {
     public enum ID
     {
-        Attack,
-        LastPowerAttack,
-        AttackUp,
-        Poison,
+        //攻撃系0～99
+        Attack = 10,
+        ShockAttack = 20,
+        LastPowerAttack = 30,
+
+        //補助系100～199
+        AttackUp = 100,
+        Poison = 150,
+
+        //常時系200～
     }
 
     [SerializeField] ID m_id = default;
@@ -19,10 +25,6 @@ public class SkillDatabase : ScriptableObject
     [SerializeField] [Multiline(4)] string m_info = default;
     [SerializeField] int m_costSP = 0;
     [SerializeField] int m_costTime = 100;
-    public string Name { get { return m_name; } }
-    public string Info { get { return m_info; } }
-    public int CostSP { get { return m_costSP; } }
-    public int CostTime { get { return m_costTime; } }
 
     //↓インスペクターで選択したスキルタイプ(ID)によって変わるように？
     //攻撃系なら有り
@@ -33,25 +35,35 @@ public class SkillDatabase : ScriptableObject
     [SerializeField] float m_effectRete = 0;
 
     [SerializeField] string m_stateName = default;
-    public string StateName { get { return m_stateName; } }
 
-    public Action<BattleStatusControllerBase, BattleStatusControllerBase[]> Effect { get; set; }//m_idを変更した時ここに対応したスキル効果を入れる？
+    Action<BattleStatusControllerBase, BattleStatusControllerBase[]> m_effect = default;
+
+    //get,set
+    public string Name { get { return m_name; } }
+    public string Info { get { return m_info; } }
+    public int CostSP { get { return m_costSP; } }
+    public int CostTime { get { return m_costTime; } }
+    public string StateName { get { return m_stateName; } }
+    public Action<BattleStatusControllerBase, BattleStatusControllerBase[]> Effect { get { return m_effect; } }//m_idを変更した時ここに対応したスキル効果を入れる？
 
     private void OnValidate()
     {
         switch (m_id)
         {
             case ID.Attack:
-                Effect = Attack;
+                m_effect = Attack;
+                break;
+            case ID.ShockAttack:
+                m_effect = ShockAttack;
                 break;
             case ID.LastPowerAttack:
-                Effect = LastPowerAttack;
+                m_effect = LastPowerAttack;
                 break;
             case ID.AttackUp:
-                Effect = AttackUp;
+                m_effect = AttackUp;
                 break;
             case ID.Poison:
-                Effect = Poison;
+                m_effect = Poison;
                 break;
             default:
                 break;
@@ -65,9 +77,17 @@ public class SkillDatabase : ScriptableObject
             //ダメージ関数などの計算構成は変えるかも
             //int a = Mathf.FloorToInt(actor.FuncAttackPowerRate(actor.AttackPower));
             target.Damage(target.GetReceiveDamage(actor.AttackPower * m_powerRate, actor.TotalAttackPower));//使用者がtargetにm_powerRateでダメージを与える関数
-            target.DecreaseFalterValue(m_falterPower);//怯み削り量はダメージに比例させる？
             //あるなら追加効果
             //UseSkill
+        }
+    }
+
+    public void ShockAttack(BattleStatusControllerBase actor, BattleStatusControllerBase[] targets)//スキル選択時にそのスキルが選択系ならtarget選択関数)
+    {
+        foreach (var target in targets)
+        {
+            target.Damage(target.GetReceiveDamage(actor.AttackPower * m_powerRate, actor.TotalAttackPower));//使用者がtargetにm_powerRateでダメージを与える関数
+            target.DecreaseFalterValue(m_falterPower);//怯み削り量はダメージに比例させる？
         }
     }
 
@@ -77,14 +97,12 @@ public class SkillDatabase : ScriptableObject
         foreach (var target in targets)
         {
             target.Damage(target.GetReceiveDamage(actor.AttackPower * specialPowerRate, actor.TotalAttackPower));
-            target.DecreaseFalterValue(m_falterPower);
         }
     }
 
     public void AttackUp(BattleStatusControllerBase actor, BattleStatusControllerBase[] targets)//スキル選択時にそのスキルが選択系ならtarget選択関数))
     {
         actor.AddStatesEffect(new AttackUp(m_effectRete, actor, m_effectTime));
-        //target.全体攻撃UP()
     }
     public void Poison(BattleStatusControllerBase actor, BattleStatusControllerBase[] targets)//スキル選択時にそのスキルが選択系ならtarget選択関数))
     {

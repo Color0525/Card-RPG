@@ -8,8 +8,8 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] AudioClip m_intro;
-    [SerializeField] AudioClip m_loop;
+    [SerializeField] AudioClip m_intro = default;
+    [SerializeField] AudioClip m_loop = default;
 
     AudioSource m_audio;
 

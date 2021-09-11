@@ -7,8 +7,8 @@ using UnityEngine;
 /// </summary>
 public class BattlePlayerController : BattleStatusControllerBase
 {
-    [SerializeField] GameObject m_statusIconPrefab;
-    [SerializeField] ParticleSystem m_fireSwordParticle;
+    [SerializeField] GameObject m_statusIconPrefab = default;
+    //[SerializeField] ParticleSystem m_fireSwordParticle;
 
     void Awake()
     {
@@ -20,10 +20,10 @@ public class BattlePlayerController : BattleStatusControllerBase
     /// <summary>
     /// 行動開始(味方)
     /// </summary>
-    public override void StartAction()
+    public override void BeginAction()
     {
-        base.StartAction();
-        m_battleManager.StartCommandSelect(HavesSkills, this);
+        base.BeginAction();
+        BattleManager.Instance.StartCommandSelect(m_havesSkills, this);
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public class BattlePlayerController : BattleStatusControllerBase
     /// </summary>
     public void PlayerActionCommand(SkillDatabase skill)
     {
-        m_battleManager.EndCommandSelect();
+        BattleManager.Instance.EndCommandSelect();
         //N
         //m_CurrentSkill = skill;
         skill.Effect(this, FindObjectsOfType<BattleEnemyController>());
@@ -44,19 +44,18 @@ public class BattlePlayerController : BattleStatusControllerBase
         //PlayStateAnimator(m_CurrentSkill);
     }
 
-    // アニメイベント    
-    public override void Hit(BattleStatusControllerBase target = null)
-    {
-        //N
-        //BattleStatusControllerBase thisTarget = FindObjectOfType<BattleEnemyController>();
-        //base.Hit(thisTarget);
-        //if (m_CurrentSkill.m_FireEffect)
-        //{
-        //    m_fireSwordParticle.gameObject.SetActive(false);
-        //}
-    }
-
     //N
+    // アニメイベント    
+    //public override void Hit(BattleStatusControllerBase target = null)
+    //{
+    //    BattleStatusControllerBase thisTarget = FindObjectOfType<BattleEnemyController>();
+    //    base.Hit(thisTarget);
+    //    if (m_CurrentSkill.m_FireEffect)
+    //    {
+    //        m_fireSwordParticle.gameObject.SetActive(false);
+    //    }
+    //}
+
     //public override void End()
     //{
     //    if (m_CurrentSkill.m_FireEffect)

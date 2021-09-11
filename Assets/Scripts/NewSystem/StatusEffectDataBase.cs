@@ -5,24 +5,23 @@ using UnityEngine;
 
 public abstract class StatusEffectDataBase
 {
-
-    protected BattleStatusControllerBase m_target = null;
+    protected BattleStatusControllerBase m_target = default;
     protected int m_effectTime = -1;
-    protected Action m_addEffect = null;
-    protected Action m_removeEffect = null;
+    protected Action m_addEffect = default;
+    protected Action m_removeEffect = default;
     public Action AddEffect { get { return m_addEffect; } }
     public Action RemoveEffect { get { return m_removeEffect; } }
 
-    protected StatusEffectDataBase(BattleStatusControllerBase target, int effectTime = -1)
-    {
-        m_target = target;
-        if (effectTime > 0)
-        {
-            m_effectTime = effectTime;
-            m_addEffect += () => m_target.TimeElapsedStatusEffect += TimeElapsed;
-            m_removeEffect += () => m_target.TimeElapsedStatusEffect -= TimeElapsed;
-        }
-    }
+    protected StatusEffectDataBase(BattleStatusControllerBase target) => m_target = target;
+    //{
+    //    m_target = target;
+    //    if (effectTime > 0)
+    //    {
+    //        m_effectTime = effectTime;
+    //        m_addEffect += () => m_target.TimeElapsedStatusEffect += TimeElapsed;
+    //        m_removeEffect += () => m_target.TimeElapsedStatusEffect -= TimeElapsed;
+    //    }
+    //}
     /*
     public enum ID
     {
@@ -72,12 +71,12 @@ public abstract class StatusEffectDataBase
         }
     }
     */
-    //protected void SetEffectTime(int effectTime)
-    //{
-    //    m_effectTime = effectTime;
-    //    m_addEffect += () => m_target.TimeElapsedStatusEffect += TimeElapsed;
-    //    m_removeEffect += () => m_target.TimeElapsedStatusEffect -= TimeElapsed;
-    //}
+    protected void SetEffectTime(int effectTime)
+    {
+        m_effectTime = effectTime;
+        m_addEffect += () => m_target.TimeElapsedStatusEffect += TimeElapsed;
+        m_removeEffect += () => m_target.TimeElapsedStatusEffect -= TimeElapsed;
+    }
     void TimeElapsed()
     {
         m_effectTime--;
@@ -126,21 +125,26 @@ public class Down : StatusEffectDataBase
 
 public class Poison : StatusEffectDataBase
 {
-    public Poison(BattleStatusControllerBase target, int effectTime = -1) : base(target, effectTime)
+    public Poison(BattleStatusControllerBase target, int effectTime = -1) : base(target)
     {
         m_addEffect += () => m_target.TimeElapsedStatusEffect += PoisonDamage;
         m_removeEffect += () => m_target.TimeElapsedStatusEffect -= PoisonDamage;
+        SetEffectTime(effectTime);
     }
-    void PoisonDamage() => m_target.Damage(1);
+    void PoisonDamage()//10カウントに一度、最大体力の5％分のダメージ
+    {
+        if (m_effectTime % 10 == 0) { m_target.Damage(Mathf.CeilToInt(m_target.MaxHP * 0.05f)); Debug.Log("毒"); }
+    }
 }
 
 public class AttackUp : StatusEffectDataBase
 {
     //float m_effectRate = 1;
-    public AttackUp(float effectRate, BattleStatusControllerBase target, int effectTime = -1) : base(target, effectTime)
+    public AttackUp(float effectRate, BattleStatusControllerBase target, int effectTime = -1) : base(target)
     {
         m_addEffect += () => m_target.AttackPowerRate.Add(effectRate);
         m_removeEffect += () => m_target.AttackPowerRate.Remove(effectRate);
+        SetEffectTime(effectTime);
 
         //m_effectRate = effectRate;
         //m_addEffect += () => m_target.FuncAttackPowerRate += GetMultipliedValue;

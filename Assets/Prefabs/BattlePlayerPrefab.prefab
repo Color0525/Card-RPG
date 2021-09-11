@@ -691,8 +691,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_name: "\u30E6\u30CB\u30C6\u30A3\u3061\u3083\u3093"
-  m_maxHP: 100
-  m_currentHP: 100
+  m_maxHP: 150
+  m_currentHP: 150
   m_maxFalterValue: 100
   m_currentFalterValue: 100
   m_maxSP: 20
@@ -702,18 +702,17 @@ MonoBehaviour:
   m_defensePower: 20
   m_havesSkills:
   - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
+  - {fileID: 11400000, guid: ebb8bcf936f806945bffa767bc8343bd, type: 2}
+  - {fileID: 11400000, guid: 7db498c829c4eff4aa7b21c60117b6b9, type: 2}
   - {fileID: 11400000, guid: e69b729f0eff21c4ca8eed118a303df3, type: 2}
   - {fileID: 11400000, guid: 39b429be2da506541bc16782f0c7c003, type: 2}
-  - {fileID: 11400000, guid: 7db498c829c4eff4aa7b21c60117b6b9, type: 2}
   - {fileID: 11400000, guid: 29d8b7594a1c1fe4c96033ced53d69af, type: 2}
   m_statusIcon: {fileID: 0}
-  m_hitParticlePosition: {fileID: 5272943110201845264}
   m_damageTextPosition: {fileID: 5272943110201845264}
   m_damageTextPrefab: {fileID: 8046955857244188895, guid: 5a36d68f2439e044b90c0a341c5e5732,
     type: 3}
   m_statusIconPrefab: {fileID: 2906720129903181303, guid: 508de3f176b66ef4e8100a0c6d0b592b,
     type: 3}
-  m_fireSwordParticle: {fileID: 635688800671331386}
 --- !u!1 &6668329273356992693
 GameObject:
   m_ObjectHideFlags: 0
@@ -14359,12 +14358,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3a93a15a0c9fb8458d4c9a5d3214127, type: 3}
---- !u!198 &635688800671331386 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 198421077076039884, guid: a3a93a15a0c9fb8458d4c9a5d3214127,
-    type: 3}
-  m_PrefabInstance: {fileID: 725789221220265206}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &728970054063101748 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4317874184272834, guid: a3a93a15a0c9fb8458d4c9a5d3214127,

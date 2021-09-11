@@ -22325,7 +22325,6 @@ MonoBehaviour:
     type: 3}
   m_winCutScene: {fileID: 248272138}
   m_loseCutScene: {fileID: 500898969}
-  m_delayAtEndTurn: 0.75
   m_timeUpdateInterval: 0.05
   m_playerPrefabs:
   - {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2, type: 3}

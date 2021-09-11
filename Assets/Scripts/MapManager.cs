@@ -12,17 +12,17 @@ public class MapManager : MonoBehaviour
     [SerializeField] bool m_hideSystemMouseCursor = false;
 
     //カットシーン
-    [SerializeField] PlayableDirector m_openingCutScene;
-    [SerializeField] PlayableDirector m_continueCutScene;
+    [SerializeField] PlayableDirector m_openingCutScene = default;
+    [SerializeField] PlayableDirector m_continueCutScene = default;
 
     //プレイヤー
-    [SerializeField] GameObject m_mapPlayer;
-    [SerializeField] GameObject m_mainVirtualCamera;
+    [SerializeField] GameObject m_mapPlayer = default;
+    [SerializeField] GameObject m_mainVirtualCamera = default;
 
     //UI
-    [SerializeField] GameObject m_UI;
-    [SerializeField] TextMeshProUGUI m_questTaskText;
-    [SerializeField] GameObject m_questClearText;
+    [SerializeField] GameObject m_UI = default;
+    [SerializeField] TextMeshProUGUI m_questTaskText = default;
+    [SerializeField] GameObject m_questClearText = default;
 
     void Start()
     {

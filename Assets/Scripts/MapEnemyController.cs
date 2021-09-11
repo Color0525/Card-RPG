@@ -23,7 +23,7 @@ public class MapEnemyController : MonoBehaviour
     /// <summary>
     /// 索敵コライダー
     /// </summary>
-    [SerializeField] SphereCollider m_discoverCollider;
+    [SerializeField] SphereCollider m_discoverCollider = default;
     /// <summary>
     /// 索敵範囲
     /// </summary>
@@ -39,7 +39,7 @@ public class MapEnemyController : MonoBehaviour
     /// <summary>
     /// 表示するビックリマーク
     /// </summary>
-    [SerializeField] GameObject m_bikkuri;
+    [SerializeField] GameObject m_bikkuri = default;
 
     /// <summary>
     /// 制御状態

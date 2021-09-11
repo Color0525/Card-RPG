@@ -8,10 +8,10 @@ using UnityEngine;
 /// </summary>
 public class CommandButtonController : MonoBehaviour
 { 
-    [SerializeField] TextMeshProUGUI m_commandName;
-    [SerializeField] TextMeshProUGUI m_costSP;
-    [SerializeField] AudioClip m_selectSE;
-    [SerializeField] AudioClip m_ngSE;
+    [SerializeField] TextMeshProUGUI m_commandName = default;
+    [SerializeField] TextMeshProUGUI m_costSP = default;
+    [SerializeField] AudioClip m_selectSE = default;
+    [SerializeField] AudioClip m_ngSE = default;
 
     //スキル
     SkillDatabase m_currentSkill;
@@ -76,7 +76,7 @@ public class CommandButtonController : MonoBehaviour
         }
         else
         {
-            FindObjectOfType<BattleManager>().ActionText("SPが足りない！");
+            FindObjectOfType<BattleManager>().ShowActionText("SPが足りない！");
             PlaySE(m_ngSE);
         }
     }
