@@ -41,6 +41,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera m_beginBattleCamera = default;
     [SerializeField] float m_beginBattleTime = 2f;
     //UI
+    [SerializeField] GameObject m_coolTimePanel = default;
+    [SerializeField] GameObject m_pleyerStatusPanel = default;
     [SerializeField] GameObject m_commandWindow = default;
     [SerializeField] Transform m_commandArea = default;
     [SerializeField] GameObject m_commandButtonPrefab = default;
@@ -164,7 +166,9 @@ public class BattleManager : MonoBehaviour
             case BattleState.InAction://行動中
                 break;
 
-            case BattleState.EndBattle://戦闘終了したときResultTimelineを再生しAfterBattleへ
+            case BattleState.EndBattle://戦闘終了したときResultTimelineを再生しEndWaitへ
+                m_coolTimePanel.SetActive(false);//非アクティブ
+                m_pleyerStatusPanel.SetActive(false);//非アクティブ
                 if (m_won)
                 {
                     //クエストのタスクチェック
@@ -216,9 +220,13 @@ public class BattleManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator BeginBattle(float aimTime)
     {
-        yield return StartCoroutine(SceneController.m_Instance.SlideEffect());
+        yield return StartCoroutine(SceneController.m_Instance.SlideEffect());//スライドエフェクト
         yield return new WaitForSeconds(aimTime);
-        m_beginBattleCamera.gameObject.SetActive(false);
+        m_beginBattleCamera.gameObject.SetActive(false);//カメラ切り替え
+        m_coolTimePanel.SetActive(true);//アクティブ
+        m_pleyerStatusPanel.SetActive(true);//アクティブ
+        m_enemyUnits.ForEach(x => x.SetupIcon(m_coolTimePanel));//アイコンセットアップ
+        m_playerUnits.ForEach(x => x.SetupIcon(m_coolTimePanel, m_pleyerStatusPanel));//アイコンセットアップ
         yield return new WaitForSeconds(Camera.main.gameObject.GetComponent<CinemachineBrain>().m_DefaultBlend.BlendTime);
         m_battleState = BattleState.WaitTime;
     }

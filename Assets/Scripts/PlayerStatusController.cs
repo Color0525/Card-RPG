@@ -16,18 +16,32 @@ public class PlayerStatusController : StatusIconController
 
     public override void Awake()
     {
-        m_coolTimeBarPanel = GameObject.FindWithTag("PlayersCoolTimeBar").transform;
+        //m_coolTimeBarPanel = GameObject.FindWithTag("PlayersCoolTimeBar").transform;
     }
 
-    ///// <summary>
-    ///// ステータスアイコンのセットアップ(Player)
-    ///// </summary>
-    ///// <param name="status"></param>
-    //public override void SetupStatus(BattleStatusControllerBase status)
-    //{
-    //    base.SetupStatus(status);
-    //    UpdateSPBar(status.MaxSP, status.CurrentSP);
-    //}
+    /// <summary>
+    /// ステータスアイコンのセットアップ(Player)
+    /// </summary>
+    /// <param name="status"></param>
+    /// <param name="coolTimePanel"></param>
+    public override void SetupStatus(BattleStatusControllerBase status, GameObject coolTimePanel)
+    {
+        UpdateHPBar(status.MaxHP, status.CurrentHP);
+        UpdateGuardBar(status.MaxGuard, status.CurrentGuard);
+        UpdateSPBar(status.MaxSP, status.CurrentSP);
+
+        //m_coolTimeBarPanel = GameObject.FindWithTag("PlayersCoolTimeBar").transform;
+        GameObject go = Instantiate(m_coolTimeBarPrefab, coolTimePanel.transform.Find("Players"));
+        m_coolTimeBar = go.GetComponent<Slider>();
+        m_coolTimeValue = go.GetComponentInChildren<TextMeshProUGUI>();//valueを参照
+        Image[] children = go.GetComponentsInChildren<Image>();
+        foreach (var child in children)
+        {
+            if (child.name == "Frame") child.color = Color.green;//枠の色を変える(playerは緑) 
+            else if (child.name == "UnitImage") child.sprite = status.CoolTimeIcon;//そのユニットのイメージに
+        }
+        UpdateCoolTimeBar(status.CoolTime);
+    }
 
     /// <summary>
     /// HPBarを更新(Player)

@@ -32,10 +32,11 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     [SerializeField] protected SkillDatabase[] m_havesSkills;
     //Nいらない？//NSkillDatabaseScriptable m_currentSkill;
     //アイコン等
-    [SerializeField] protected StatusIconController m_statusIcon = default;
+    [SerializeField] Sprite m_coolTimeIcon = default;
     //[SerializeField] Transform m_hitParticlePosition = default;
     [SerializeField] Transform m_damageTextPosition = default;
-    [SerializeField] GameObject m_damageTextPrefab = default;
+    [SerializeField] GameObject m_damageTextPrefab = default;//GMから出す？
+    [SerializeField] protected StatusIconController m_statusIcon = default;
 
     Animator m_anim;
 
@@ -73,11 +74,20 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public Action TimeElapsedStatusEffect { get { return m_timeElapsedStatusEffect; } set { m_timeElapsedStatusEffect = value; } }
     //public SkillDatabase[] HavesSkills { get { return m_havesSkills; } }
     //N//public NSkillDatabaseScriptable m_CurrentSkill { get { return m_currentSkill; } set { m_currentSkill = value; } }
+    public Sprite CoolTimeIcon { get { return m_coolTimeIcon; } }
 
     void Start()
     {
         m_anim = GetComponent<Animator>();
-        m_statusIcon.SetupStatus(this);
+    }
+
+    /// <summary>
+    /// ステータスアイコン等をセットアップ
+    /// </summary>
+    /// <param name="coolTimePanel"></param>
+    public void SetupIcon(GameObject coolTimePanel)
+    {
+        m_statusIcon.SetupStatus(this, coolTimePanel);
     }
 
     /// <summary>

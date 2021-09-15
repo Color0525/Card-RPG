@@ -14,31 +14,40 @@ public class StatusIconController : MonoBehaviour
     [SerializeField] protected Slider m_HPBar = default;
     [SerializeField] protected Slider m_guardBar = default;
     [SerializeField] protected Slider m_SPBar = default;
-    [SerializeField] GameObject m_coolTimeBarPrefab = default;
-    Slider m_coolTimeBar = default;
-    TextMeshProUGUI m_coolTimeValue = default;
-    protected Transform m_coolTimeBarPanel = default;
+    [SerializeField] protected GameObject m_coolTimeBarPrefab = default;
+    protected Slider m_coolTimeBar = default;
+    protected TextMeshProUGUI m_coolTimeValue = default;
+    //protected Transform m_coolTimeBarPanel = default;
     int m_maxCoolTimeBar = 200;
 
     protected float m_effectTime = 0.2f;
 
     public virtual void Awake()
     {
-        m_coolTimeBarPanel = GameObject.FindWithTag("EnemysCoolTimeBar").transform;
+        //m_coolTimeBarPanel = GameObject.FindWithTag("EnemysCoolTimeBar").transform;
     }
 
     /// <summary>
-    /// ステータスアイコンのセットアップ
+    /// ステータスやクールタイムアイコンのセットアップ
     /// </summary>
     /// <param name="status"></param>
-    public virtual void SetupStatus(BattleStatusControllerBase status)
+    /// <param name="coolTimePanel"></param>
+    public virtual void SetupStatus(BattleStatusControllerBase status, GameObject coolTimePanel)
     {
         UpdateHPBar(status.MaxHP, status.CurrentHP);
         UpdateGuardBar(status.MaxGuard, status.CurrentGuard);
         UpdateSPBar(status.MaxSP, status.CurrentSP);
 
-        m_coolTimeBar = Instantiate(m_coolTimeBarPrefab, m_coolTimeBarPanel).GetComponent<Slider>();
-        m_coolTimeValue = m_coolTimeBar.transform.GetComponentInChildren<TextMeshProUGUI>();
+        //m_coolTimeBarPanel = coolTimePanel.transform.Find("Enemys");
+        GameObject go = Instantiate(m_coolTimeBarPrefab, coolTimePanel.transform.Find("Enemys"));
+        m_coolTimeBar = go.GetComponent<Slider>();
+        m_coolTimeValue = go.GetComponentInChildren<TextMeshProUGUI>();//valueを参照
+        Image[] children = go.GetComponentsInChildren<Image>();
+        foreach (var child in children)
+        {
+            if (child.name == "Frame") child.color = Color.magenta;//枠の色を変える
+            else if (child.name == "UnitImage") child.sprite = status.CoolTimeIcon;//そのユニットのイメージに
+        }
         UpdateCoolTimeBar(status.CoolTime);
     }
 

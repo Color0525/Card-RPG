@@ -10,11 +10,17 @@ public class BattlePlayerController : BattleStatusControllerBase
     [SerializeField] GameObject m_statusIconPrefab = default;
     //[SerializeField] ParticleSystem m_fireSwordParticle;
 
-    void Awake()
+    /// <summary>
+    /// ステータスアイコンをパネルに入れ、セットアップ
+    /// </summary>
+    /// <param name="coolTimePanel"></param>
+    /// <param name="statusIconPanel"></param>
+    public void SetupIcon(GameObject coolTimePanel, GameObject statusIconPanel)
     {
         //statusIconをセット //GMの方で生成はやってもらう？
-        m_statusIcon = Instantiate(m_statusIconPrefab, GameObject.FindWithTag("StatusPanel").transform).GetComponent<StatusIconController>();
+        m_statusIcon = Instantiate(m_statusIconPrefab, statusIconPanel.transform).GetComponent<StatusIconController>();
         //SetStatusIcon(statusIcon.GetComponent<StatusIconController>());
+        base.SetupIcon(coolTimePanel);
     }
 
     ///// <summary>
