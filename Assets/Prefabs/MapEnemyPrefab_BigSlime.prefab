@@ -34,9 +34,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5379119384534240983, guid: 2dd44fae1bc721a40b59d41cda4cae35,
         type: 3}
+      propertyPath: m_battleEnemyPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5379119384534240983, guid: 2dd44fae1bc721a40b59d41cda4cae35,
+        type: 3}
       propertyPath: m_stop
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5379119384534240983, guid: 2dd44fae1bc721a40b59d41cda4cae35,
+        type: 3}
+      propertyPath: m_battleEnemyPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 4993672648434196426, guid: edcdafc91e0baea4cbd2476524a8d456,
+        type: 3}
     - target: {fileID: 5379119384534240983, guid: 2dd44fae1bc721a40b59d41cda4cae35,
         type: 3}
       propertyPath: m_battleEnemyPrefabs.Array.data[0]

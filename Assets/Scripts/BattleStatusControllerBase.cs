@@ -118,7 +118,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// <summary>
     /// 行動終了
     /// </summary>
-    void EndAction()
+    protected virtual void EndAction()
     {
         BattleManager.Instance.ReturnWaitTime();
     }
@@ -327,6 +327,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public virtual void Death() //Damageメソッド内に入れる？
     {
         m_alive = false;
+        m_statusIcon.HideCoolTimeBar();
         BattleManager.Instance.CheckWinOrLose(this);
 
         //if (this.gameObject.GetComponent<BattleEnemyController>())

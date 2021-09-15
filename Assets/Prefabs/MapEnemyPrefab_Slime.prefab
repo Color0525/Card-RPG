@@ -264,6 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_battleEnemyPrefabs:
   - {fileID: 4993672648434196426, guid: edcdafc91e0baea4cbd2476524a8d456, type: 3}
+  - {fileID: 4993672648434196426, guid: edcdafc91e0baea4cbd2476524a8d456, type: 3}
   m_movingSpeed: 2
   m_chaseMovingSpeed: 4
   m_turnSpeed: 3

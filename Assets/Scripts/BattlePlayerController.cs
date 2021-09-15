@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cinemachine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ using UnityEngine;
 public class BattlePlayerController : BattleStatusControllerBase
 {
     [SerializeField] GameObject m_statusIconPrefab = default;
+    //[SerializeField] CinemachineVirtualCamera m_backCamera = default;
     //[SerializeField] ParticleSystem m_fireSwordParticle;
 
     /// <summary>
@@ -38,7 +40,15 @@ public class BattlePlayerController : BattleStatusControllerBase
     public override void BeginAction()
     {
         base.BeginAction();
-        BattleManager.Instance.StartCommandSelect(m_havesSkills, this);
+        BattleManager.Instance.BeginCommandSelect(m_havesSkills, this);
+        //m_backCamera.gameObject.SetActive(true);
+        BattleManager.Instance.BeginBackCamera(this.transform);
+    }
+    protected override void EndAction()
+    {
+        base.EndAction();
+        //m_backCamera.gameObject.SetActive(false);
+        BattleManager.Instance.EndBackCamera();
     }
 
     /// <summary>

@@ -52,6 +52,14 @@ public class StatusIconController : MonoBehaviour
     }
 
     /// <summary>
+    /// クールタイムバーを非表示に
+    /// </summary>
+    public void HideCoolTimeBar()
+    {
+        m_coolTimeBar.gameObject.SetActive(false);
+    }
+
+    /// <summary>
     /// HPBarを更新
     /// </summary>
     /// <param name="maxHP"></param>

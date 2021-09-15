@@ -412,7 +412,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &54374928
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7062,6 +7062,23 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4794019544614945759, guid: 7d424077196bbb442aa4ed877e09b5eb,
+        type: 3}
+      propertyPath: m_battlePlayerPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4794019544614945759, guid: 7d424077196bbb442aa4ed877e09b5eb,
+        type: 3}
+      propertyPath: m_battlePlayerPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2,
+        type: 3}
+    - target: {fileID: 4794019544614945759, guid: 7d424077196bbb442aa4ed877e09b5eb,
+        type: 3}
+      propertyPath: m_battlePlayerPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d424077196bbb442aa4ed877e09b5eb, type: 3}
 --- !u!1 &461807268 stripped
@@ -9336,7 +9353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mapSceneName: Map
-  m_battleSceneName: Battle
+  m_battleSceneName: NewBattle
   m_fadePanelPrefab: {fileID: 2338664709169822662, guid: 827c5abf4d8e4a648bfab575686c1dfb,
     type: 3}
   m_fadeTime: 1

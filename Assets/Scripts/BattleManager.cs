@@ -34,30 +34,9 @@ public class BattleManager : MonoBehaviour
     /// 現在の戦闘状態
     /// </summary>
     [SerializeField] BattleState m_battleState = BattleState.BeginBattle;
-    //ユニットの位置
-    [SerializeField] Transform m_playerBattlePosition = default;
-    [SerializeField] Transform m_enemyBattlePosition = default;
-    //開始演出
-    [SerializeField] CinemachineVirtualCamera m_beginBattleCamera = default;
-    [SerializeField] float m_beginBattleTime = 2f;
-    //UI
-    [SerializeField] GameObject m_coolTimePanel = default;
-    [SerializeField] GameObject m_pleyerStatusPanel = default;
-    [SerializeField] GameObject m_commandWindow = default;
-    [SerializeField] Transform m_commandArea = default;
-    [SerializeField] GameObject m_commandButtonPrefab = default;
-    [SerializeField] TextMeshProUGUI m_commandInfoText = default;
-    [SerializeField] GameObject m_ActionTextPrefab = default;
-    //カットシーン
-    [SerializeField] PlayableDirector m_winCutScene = default;
-    [SerializeField] PlayableDirector m_loseCutScene = default;
-    //ディレイ
-    //N//[SerializeField] float m_delayAtEndTurn = 1f;
-    
     //N//タイムラインの経過速度
     [SerializeField] float m_timeUpdateInterval = 0.1f;
     float m_timeCount = 0;
-
     /// <summary>
     ///戦うプレイヤー
     /// </summary>
@@ -77,17 +56,37 @@ public class BattleManager : MonoBehaviour
     /// m_allUnitに対応する現在の行動ユニット番号
     /// </summary>
     //N//int m_currentNum = 0;
-
     /// <summary>
     /// バトル中か
     /// </summary>
     //N//bool m_inBattle = true;
-
     /// <summary>
     /// 勝利したか
     /// </summary>
     bool m_won = default;
-
+    //ユニットの位置
+    [SerializeField] Transform[] m_playerBattlePosition = default;
+    [SerializeField] Transform[] m_enemyBattlePosition = default;
+    //開始演出
+    //[SerializeField] CinemachineVirtualCamera m_beginBattleCamera = default;
+    [SerializeField] float m_beginBattleTime = 2f;
+    //UI
+    [SerializeField] CinemachineVirtualCamera m_mainCamera = default;
+    [SerializeField] CinemachineVirtualCamera m_backCamera = default;
+    [SerializeField] CinemachineTargetGroup m_cameraTargetGroup = default;
+    [SerializeField] GameObject m_coolTimePanel = default;
+    [SerializeField] GameObject m_pleyerStatusPanel = default;
+    [SerializeField] GameObject m_commandWindow = default;
+    [SerializeField] Transform m_commandArea = default;
+    [SerializeField] GameObject m_commandButtonPrefab = default;
+    [SerializeField] TextMeshProUGUI m_commandInfoText = default;
+    [SerializeField] GameObject m_ActionTextPrefab = default;
+    //カットシーン
+    [SerializeField] PlayableDirector m_winCutScene = default;
+    [SerializeField] PlayableDirector m_loseCutScene = default;
+    //ディレイ
+    //N//[SerializeField] float m_delayAtEndTurn = 1f;
+    
 
     void Start()
     {
@@ -107,18 +106,32 @@ public class BattleManager : MonoBehaviour
         }
 
         //ユニットをインスタンスしてListにAdd
-        foreach (var unit in m_playerPrefabs)
+        for (int i = 0; i < m_playerPrefabs.Length; i++)
         {
-            GameObject player = Instantiate(unit, m_playerBattlePosition);
+            GameObject player = Instantiate(m_playerPrefabs[i], m_playerBattlePosition[i]);
             m_playerUnits.Add(player.GetComponent<BattlePlayerController>());
             m_allUnits.Add(player.GetComponent<BattleStatusControllerBase>());
+            m_cameraTargetGroup.AddMember(player.transform, 1, 1);
         }
-        foreach (var unit in m_enemyPrefabs)
+        //foreach (var unit in m_playerPrefabs)
+        //{
+        //    GameObject player = Instantiate(unit, m_playerBattlePosition);
+        //    m_playerUnits.Add(player.GetComponent<BattlePlayerController>());
+        //    m_allUnits.Add(player.GetComponent<BattleStatusControllerBase>());
+        //}
+        for (int i = 0; i < m_enemyPrefabs.Length; i++)
         {
-            GameObject enemy = Instantiate(unit, m_enemyBattlePosition);
+            GameObject enemy = Instantiate(m_enemyPrefabs[i], m_enemyBattlePosition[i]);
             m_enemyUnits.Add(enemy.GetComponent<BattleEnemyController>());
             m_allUnits.Add(enemy.GetComponent<BattleStatusControllerBase>());
+            m_cameraTargetGroup.AddMember(enemy.transform, 1, 1);
         }
+        //foreach (var unit in m_enemyPrefabs)
+        //{
+        //    GameObject enemy = Instantiate(unit, m_enemyBattlePosition);
+        //    m_enemyUnits.Add(enemy.GetComponent<BattleEnemyController>());
+        //    m_allUnits.Add(enemy.GetComponent<BattleStatusControllerBase>());
+        //}
 
         //戦闘開始演出（最後にWaitTimeにする）
         StartCoroutine(BeginBattle(m_beginBattleTime));
@@ -222,7 +235,7 @@ public class BattleManager : MonoBehaviour
     {
         yield return StartCoroutine(SceneController.m_Instance.SlideEffect());//スライドエフェクト
         yield return new WaitForSeconds(aimTime);
-        m_beginBattleCamera.gameObject.SetActive(false);//カメラ切り替え
+        m_mainCamera.gameObject.SetActive(true);//カメラ切り替え
         m_coolTimePanel.SetActive(true);//アクティブ
         m_pleyerStatusPanel.SetActive(true);//アクティブ
         m_enemyUnits.ForEach(x => x.SetupIcon(m_coolTimePanel));//アイコンセットアップ
@@ -246,6 +259,7 @@ public class BattleManager : MonoBehaviour
     public void ReturnWaitTime()
     {
         m_battleState = BattleState.WaitTime;
+        //m_mainButtleCamera.Follow = m_normalFollowPosition.gameObject.transform;
         //N//StartCoroutine(DelayAndUpdateState(m_delayAtEndTurn, BattleState.EndBattle));//コルーチンやめてEndTurのカウントでディレイをかける
     }
 
@@ -266,7 +280,7 @@ public class BattleManager : MonoBehaviour
     /// コマンドセレクトを開始する
     /// </summary>
     /// <param name="actor"></param>
-    public void StartCommandSelect(SkillDatabase[] skills, BattlePlayerController actor)
+    public void BeginCommandSelect(SkillDatabase[] skills, BattlePlayerController actor)
     {
         m_commandWindow.SetActive(true);
         foreach (var skill in skills)
@@ -286,6 +300,25 @@ public class BattleManager : MonoBehaviour
             Destroy(child.gameObject);
         }
         m_commandWindow.SetActive(false);
+    }
+
+    /// <summary>
+    /// バックカメラのフォロー対象を変え、アクティブにする
+    /// </summary>
+    /// <param name="targetPos"></param>
+    public void BeginBackCamera(Transform targetPos)
+    {
+        //if (targetPos == null) targetPos = m_normalFollowPosition;
+        m_backCamera.Follow = targetPos;
+        m_backCamera.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// バックカメラを非アクティブにする
+    /// </summary>
+    public void EndBackCamera()
+    {
+        m_backCamera.gameObject.SetActive(false);
     }
 
     ///// <summary>
