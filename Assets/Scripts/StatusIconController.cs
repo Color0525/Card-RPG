@@ -6,29 +6,40 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Playerのステータスアイコンを操作
+/// ステータスアイコンを操作
 /// </summary>
 public class StatusIconController : MonoBehaviour
 {
-    [SerializeField] bool m_noMoveEffect = true;
-    float m_effectTime = 0.2f;
-    [SerializeField] Slider m_HPBar = default;
-    [SerializeField] TextMeshProUGUI m_HPValue = default;
-    [SerializeField] Slider m_SPBar = default;
-    [SerializeField] TextMeshProUGUI m_SPValue = default;
+    //[SerializeField] bool m_noMoveEffect = true;
+    [SerializeField] protected Slider m_HPBar = default;
+    [SerializeField] protected Slider m_guardBar = default;
+    [SerializeField] protected Slider m_SPBar = default;
+    [SerializeField] GameObject m_coolTimeBarPrefab = default;
+    Slider m_coolTimeBar = default;
+    TextMeshProUGUI m_coolTimeValue = default;
+    protected Transform m_coolTimeBarPanel = default;
+    int m_maxCoolTimeBar = 200;
+
+    protected float m_effectTime = 0.2f;
+
+    public virtual void Awake()
+    {
+        m_coolTimeBarPanel = GameObject.FindWithTag("EnemysCoolTimeBar").transform;
+    }
 
     /// <summary>
     /// ステータスアイコンのセットアップ
     /// </summary>
-    /// <param name="name"></param>
-    /// <param name="maxHP"></param>
-    /// <param name="currentHP"></param>
-    /// <param name="maxSP"></param>
-    /// <param name="currentSP"></param>
-    public void SetupStatus(BattleStatusControllerBase status)
+    /// <param name="status"></param>
+    public virtual void SetupStatus(BattleStatusControllerBase status)
     {
         UpdateHPBar(status.MaxHP, status.CurrentHP);
+        UpdateGuardBar(status.MaxGuard, status.CurrentGuard);
         UpdateSPBar(status.MaxSP, status.CurrentSP);
+
+        m_coolTimeBar = Instantiate(m_coolTimeBarPrefab, m_coolTimeBarPanel).GetComponent<Slider>();
+        m_coolTimeValue = m_coolTimeBar.transform.GetComponentInChildren<TextMeshProUGUI>();
+        UpdateCoolTimeBar(status.CoolTime);
     }
 
     /// <summary>
@@ -36,30 +47,21 @@ public class StatusIconController : MonoBehaviour
     /// </summary>
     /// <param name="maxHP"></param>
     /// <param name="currentHP"></param>
-    public void UpdateHPBar(int maxHP, int currentHP)
+    public virtual void UpdateHPBar(int maxHP, int currentHP)
     {
-        if (m_noMoveEffect)
-        {
-            m_HPBar.DOValue((float)currentHP / (float)maxHP, m_effectTime);
-        }
-        else
-        {
-            m_HPBar.transform.DOScale(new Vector3(1.5f, 0.9f, 1), 0.05f);
-            m_HPBar.DOValue((float)currentHP / (float)maxHP, m_effectTime);
-            m_HPBar.transform.DOScale(1f, 0.1f).SetDelay(m_effectTime);
-        }
-        
-        if (m_HPValue)
-        {
-            if (m_noMoveEffect)
-            {
-                m_HPValue.text = currentHP.ToString();
-            }
-            else
-            {
-                DOTween.To(() => int.Parse(m_HPValue.text), x => m_HPValue.text = x.ToString(), currentHP, m_effectTime);
-            }
-        }
+        //バーを現在値の比率までなめらかに変化させる
+        m_HPBar.DOValue((float)currentHP / (float)maxHP, m_effectTime);
+    }
+
+    /// <summary>
+    /// GuardBarを更新
+    /// </summary>
+    /// <param name="maxGuard"></param>
+    /// <param name="currentGuard"></param>
+    public virtual void UpdateGuardBar(int maxGuard, int currentGuard)
+    {
+        //バーを現在値の比率までなめらかに変化させる
+        m_guardBar.DOValue((float)currentGuard / (float)maxGuard, m_effectTime);
     }
 
     /// <summary>
@@ -67,32 +69,41 @@ public class StatusIconController : MonoBehaviour
     /// </summary>
     /// <param name="maxSP"></param>
     /// <param name="currentSP"></param>
-    public void UpdateSPBar(int maxSP, int currentSP)
+    public virtual void UpdateSPBar(int maxSP, int currentSP)
     {
-        if (m_SPBar)
-        {
-            if (m_noMoveEffect)
-            {
-                m_SPBar.DOValue((float)currentSP / (float)maxSP, m_effectTime);
-            }
-            else
-            {
-                m_SPBar.transform.DOScale(new Vector3(1.5f, 0.9f, 1), 0.05f);
-                m_SPBar.DOValue((float)currentSP / (float)maxSP, m_effectTime);
-                m_SPBar.transform.DOScale(1f, 0.1f).SetDelay(m_effectTime);
-            }
-            
-        }
-        if (m_SPValue)
-        {
-            if (m_noMoveEffect)
-            {
-                m_SPValue.text = currentSP.ToString();
-            }
-            else
-            {
-                DOTween.To(() => int.Parse(m_SPValue.text), x => m_SPValue.text = x.ToString(), currentSP, m_effectTime);
-            }
-        }
+        //バーを現在値の比率までなめらかに変化させる
+        m_SPBar.DOValue((float)currentSP / (float)maxSP, m_effectTime);
     }
+
+    public void UpdateCoolTimeBar(float coolTime)
+    {
+        //バーを現在値の比率までなめらかに変化させる//クールタイムバーの最大値はm_maxCoolTimeBarにする
+        m_coolTimeBar.DOValue(coolTime / m_maxCoolTimeBar, m_effectTime);
+
+        //小さい順に
+
+        //値を現在値までなめらかに変化させる
+        DOTween.To(() => int.Parse(m_coolTimeValue.text), x => m_coolTimeValue.text = x.ToString(), (int)coolTime, m_effectTime);
+    }
+
+
+    //if (m_noMoveEffect)
+    //{
+    //m_HPBar.DOValue((float)currentHP / (float)maxHP, m_effectTime);
+    //}
+    //else
+    //{
+    //}
+
+    //if (m_HPValue)
+    //{
+    //    if (m_noMoveEffect)
+    //    {
+    //        m_HPValue.text = currentHP.ToString();
+    //    }
+    //    else
+    //    {
+
+    //    }
+    //}
 }

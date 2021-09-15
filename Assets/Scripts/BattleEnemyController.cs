@@ -49,7 +49,7 @@ public class BattleEnemyController : BattleStatusControllerBase
     //    base.Hit(thisTarget);
     //}
 
-    void Dead()
+    void Dead()//共通にして、敗カットシーンはカメラ移動だけ？
     {
         Instantiate(m_DeadParticlePrefab, this.gameObject.transform.position, Quaternion.identity);
         this.gameObject.SetActive(false);

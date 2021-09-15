@@ -12,10 +12,19 @@ public class BattlePlayerController : BattleStatusControllerBase
 
     void Awake()
     {
-        //statusIconをセット
-        GameObject statusIcon = Instantiate(m_statusIconPrefab, GameObject.FindWithTag("StatusPanel").transform);
-        SetStatusIcon(statusIcon.GetComponent<StatusIconController>());
+        //statusIconをセット //GMの方で生成はやってもらう？
+        m_statusIcon = Instantiate(m_statusIconPrefab, GameObject.FindWithTag("StatusPanel").transform).GetComponent<StatusIconController>();
+        //SetStatusIcon(statusIcon.GetComponent<StatusIconController>());
     }
+
+    ///// <summary>
+    ///// StatusIconをセット
+    ///// </summary>
+    ///// <param name="statusIconController"></param>
+    //void SetStatusIcon(StatusIconController statusIconController)
+    //{
+    //    m_statusIcon = statusIconController;
+    //}
 
     /// <summary>
     /// 行動開始(味方)

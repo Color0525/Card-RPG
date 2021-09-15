@@ -9,14 +9,14 @@ using UnityEngine;
 /// <summary>
 /// 戦闘ユニットのステータス管理（継承用）
 /// </summary>
-public class BattleStatusControllerBase : MonoBehaviour
+public abstract class BattleStatusControllerBase : MonoBehaviour
 {
     //ステータス
     [SerializeField] string m_name = default;
     [SerializeField] int m_maxHP = 100;
     [SerializeField] int m_currentHP = 100;
-    [SerializeField] int m_maxFalterValue = 100;
-    [SerializeField] int m_currentFalterValue = 100;
+    [SerializeField] int m_maxGuard = 100;
+    [SerializeField] int m_currentGuard = 100;
     [SerializeField] int m_maxSP = 0;
     [SerializeField] int m_currentSP = 0;
     [SerializeField] float m_coolTime = 0;
@@ -32,7 +32,7 @@ public class BattleStatusControllerBase : MonoBehaviour
     [SerializeField] protected SkillDatabase[] m_havesSkills;
     //Nいらない？//NSkillDatabaseScriptable m_currentSkill;
     //アイコン等
-    [SerializeField] StatusIconController m_statusIcon = default;
+    [SerializeField] protected StatusIconController m_statusIcon = default;
     //[SerializeField] Transform m_hitParticlePosition = default;
     [SerializeField] Transform m_damageTextPosition = default;
     [SerializeField] GameObject m_damageTextPrefab = default;
@@ -43,6 +43,8 @@ public class BattleStatusControllerBase : MonoBehaviour
     public string Name { get { return m_name; } }
     public int MaxHP { get { return m_maxHP; } }
     public int CurrentHP { get { return m_currentHP; } }
+    public int MaxGuard { get { return m_maxGuard; } }
+    public int CurrentGuard { get { return m_currentGuard; } }
     public int MaxSP { get { return m_maxSP; } }
     public int CurrentSP { get { return m_currentSP; } }
     public float CoolTime { get { return m_coolTime; } }
@@ -79,15 +81,6 @@ public class BattleStatusControllerBase : MonoBehaviour
     }
 
     /// <summary>
-    /// StatusIconをセット
-    /// </summary>
-    /// <param name="statusIconController"></param>
-    public void SetStatusIcon(StatusIconController statusIconController)
-    {
-        m_statusIcon = statusIconController;
-    }
-
-    /// <summary>
     /// 行動開始
     /// </summary>
     public virtual void BeginAction()
@@ -99,7 +92,7 @@ public class BattleStatusControllerBase : MonoBehaviour
         if (down != null)
         {
             RemoveStatesEffect(down);
-            UpdateFalterValue(+m_maxFalterValue);
+            UpdateGuardValue(+m_maxGuard);
         }
         //NStatusEffectDataBase a = null;
         //foreach (var statesEffect in m_statesEffects)
@@ -198,16 +191,16 @@ public class BattleStatusControllerBase : MonoBehaviour
         }
     }
     /// <summary>
-    /// 怯み値の減少
+    /// ガードの減少
     /// </summary>
     /// <param name="value"></param>
-    public void DecreaseFalterValue(int value)
+    public void DecreaseGuardValue(int value)
     {
-        if (m_currentFalterValue == 0) return;//すでに0なら減少しない
+        if (m_currentGuard == 0) return;//すでに0なら減少しない
 
-        UpdateFalterValue(-value);
+        UpdateGuardValue(-value);
 
-        if (m_currentFalterValue == 0)
+        if (m_currentGuard == 0)
         {
             AddStatesEffect(new Down(this));//NStatusEffectDataBase.ID.Down);//ダウンする
             //ダウンアニメ//割れるパーティクル演出
@@ -259,14 +252,14 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// 怯み値を更新
     /// </summary>
     /// <param name="value"></param>
-    void UpdateFalterValue(int value = 0)
+    void UpdateGuardValue(int value = 0)
     {
-        //int before = m_falterValue;
-        m_currentFalterValue = Mathf.Clamp(m_currentFalterValue + value, 0, m_maxFalterValue);
-        //if (before != m_falterValue)
-        //{
-        //    m_statusIcon.UpdateFalterValueに//0ならゲージが破壊演出
-        //}
+        int before = m_currentGuard;
+        m_currentGuard = Mathf.Clamp(m_currentGuard + value, 0, m_maxGuard);
+        if (before != m_currentGuard)
+        {
+            m_statusIcon.UpdateGuardBar(m_maxGuard, m_currentGuard);//0ならゲージが破壊演出つけたい
+        }
     }
     /// <summary>
     /// SPを更新
@@ -287,12 +280,12 @@ public class BattleStatusControllerBase : MonoBehaviour
     /// <param name="value"></param>
     void UpdateCoolTime(float value = 0)
     {
-        //float before = m_coolTime;
+        float before = m_coolTime;
         m_coolTime += value;
-        //if (before != m_coolTime)
-        //{
-        //    m_statusIcon.UpdateCoolTimeBarに
-        //}
+        if (before != m_coolTime)
+        {
+            m_statusIcon.UpdateCoolTimeBar(m_coolTime);
+        }
     }
 
     /// <summary>

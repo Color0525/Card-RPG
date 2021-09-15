@@ -28,8 +28,8 @@ public class SkillDatabase : ScriptableObject
 
     //↓インスペクターで選択したスキルタイプ(ID)によって変わるように？
     //攻撃系なら有り
-    [SerializeField] float m_powerRate = 1;
-    [SerializeField] int m_falterPower = 0;
+    [SerializeField] float m_damageRate = 1;
+    [SerializeField] int m_breakPower = 0;
     //状態効果系なら有り
     [SerializeField] int m_effectTime = -1;
     [SerializeField] float m_effectRete = 0;
@@ -76,7 +76,7 @@ public class SkillDatabase : ScriptableObject
         {
             //ダメージ関数などの計算構成は変えるかも
             //int a = Mathf.FloorToInt(actor.FuncAttackPowerRate(actor.AttackPower));
-            target.Damage(target.GetReceiveDamage(actor.AttackPower * m_powerRate, actor.TotalAttackPower));//使用者がtargetにm_powerRateでダメージを与える関数
+            target.Damage(target.GetReceiveDamage(actor.AttackPower * m_damageRate, actor.TotalAttackPower));//使用者がtargetにm_powerRateでダメージを与える関数
             //あるなら追加効果
             //UseSkill
         }
@@ -86,8 +86,8 @@ public class SkillDatabase : ScriptableObject
     {
         foreach (var target in targets)
         {
-            target.Damage(target.GetReceiveDamage(actor.AttackPower * m_powerRate, actor.TotalAttackPower));//使用者がtargetにm_powerRateでダメージを与える関数
-            target.DecreaseFalterValue(m_falterPower);//怯み削り量はダメージに比例させる？
+            target.Damage(target.GetReceiveDamage(actor.AttackPower * m_damageRate, actor.TotalAttackPower));//使用者がtargetにm_powerRateでダメージを与える関数
+            target.DecreaseGuardValue(m_breakPower);//怯み削り量はダメージに比例させる？
         }
     }
 
