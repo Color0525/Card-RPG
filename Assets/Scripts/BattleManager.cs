@@ -47,11 +47,17 @@ public class BattleManager : MonoBehaviour
     [SerializeField] GameObject[] m_enemyPrefabs;
     //プレイヤー、エネミーの戦闘ユニットリスト
     [SerializeField] List<BattlePlayerController> m_playerUnits = new List<BattlePlayerController>();
+
     [SerializeField] List<BattleEnemyController> m_enemyUnits = new List<BattleEnemyController>();
+    //public List<BattlePlayerController> PlayerUnits => m_playerUnits;
+    //public List<BattleEnemyController> EnemyUnits => m_enemyUnits;
     /// <summary>
     /// すべての現在戦闘ユニット
     /// </summary>
     [SerializeField] List<BattleStatusControllerBase> m_allUnits = new List<BattleStatusControllerBase>();
+    BattlePlayerController m_currentCommandActor = default;
+    SkillDatabase m_currentCommandSkill = default;
+    //List<TargetButtonController> m_currentCommandTargets = new List<TargetButtonController>();
     /// <summary>
     /// m_allUnitに対応する現在の行動ユニット番号
     /// </summary>
@@ -78,15 +84,18 @@ public class BattleManager : MonoBehaviour
     [SerializeField] GameObject m_pleyerStatusPanel = default;
     [SerializeField] GameObject m_commandWindow = default;
     [SerializeField] Transform m_commandArea = default;
-    [SerializeField] GameObject m_commandButtonPrefab = default;
     [SerializeField] TextMeshProUGUI m_commandInfoText = default;
+    [SerializeField] GameObject m_commandButtonPrefab = default;
+    [SerializeField] GameObject m_cancelTargetingButton = default;
+    [SerializeField] GameObject m_targetButtonPrefab = default;
     [SerializeField] GameObject m_ActionTextPrefab = default;
+    [SerializeField] GameObject m_damageTextPrefab = default;
     //カットシーン
     [SerializeField] PlayableDirector m_winCutScene = default;
     [SerializeField] PlayableDirector m_loseCutScene = default;
     //ディレイ
     //N//[SerializeField] float m_delayAtEndTurn = 1f;
-    
+
 
     void Start()
     {
@@ -147,7 +156,7 @@ public class BattleManager : MonoBehaviour
 
             case BattleState.WaitTime://一定時間おきにクールを減らし、クールタイムが0になったユニットから現在ユニット行動開始
                 m_timeCount += Time.deltaTime;
-                if (m_timeCount > m_timeUpdateInterval) 
+                if (m_timeCount > m_timeUpdateInterval)
                 {
                     m_timeCount = 0;
 
@@ -280,43 +289,136 @@ public class BattleManager : MonoBehaviour
     /// コマンドセレクトを開始する
     /// </summary>
     /// <param name="actor"></param>
-    public void BeginCommandSelect(SkillDatabase[] skills, BattlePlayerController actor)
+    public void BeginPlayerCommandSelect(BattlePlayerController actor = null)
     {
+        if (actor != null)
+        {
+            m_currentCommandActor = actor;
+        }
+
         m_commandWindow.SetActive(true);
-        foreach (var skill in skills)
+
+        foreach (var skill in m_currentCommandActor.HavesSkills)
         {
             GameObject go = Instantiate(m_commandButtonPrefab, m_commandArea);
-            go.GetComponent<CommandButtonController>().SetupCammand(skill, actor, m_commandInfoText);
+            go.GetComponent<CommandButtonController>().SetupCammand(skill, m_currentCommandActor, m_commandInfoText);
         }
     }
-
     /// <summary>
     /// コマンドセレクトを終了する
     /// </summary>
-    public void EndCommandSelect()
+    public void EndPlayerCommandSelect()
     {
-        foreach (Transform child in m_commandArea)
-        {
-            Destroy(child.gameObject);
-        }
+        CommandButtonController.OthersCommandButton.ForEach(x => Destroy(x.gameObject));
+        CommandButtonController.OthersCommandButton.Clear();
+        //foreach (Transform child in m_commandArea)
+        //{
+        //    Destroy(child.gameObject);
+        //}
         m_commandWindow.SetActive(false);
+    }
+
+    /// <summary>
+    /// 対象選択を開始
+    /// </summary>
+    /// <param name="skill"></param>
+    public void BeginPlayerTargetSelect(SkillDatabase skill)
+    {
+        EndPlayerCommandSelect();//コマンド非表示
+        m_cancelTargetingButton.SetActive(true);//キャンセルボタン表示
+
+        m_currentCommandSkill = skill;
+
+        if (skill.Renge != SkillDatabase.TargetRenge.myself)
+        {
+            
+            if (skill.Renge == SkillDatabase.TargetRenge.Single)
+            {
+                foreach (var enemy in m_enemyUnits)
+                {
+                    InstantiateTargetButton(enemy, true);
+                }
+                TargetButtonController.OthersTargetButton.First().SelectTarget();//一番前をture
+            }
+            else if (skill.Renge == SkillDatabase.TargetRenge.Overall)
+            {
+                foreach (var enemy in m_enemyUnits)
+                {
+                    InstantiateTargetButton(enemy, false);
+                }
+                TargetButtonController.OthersTargetButton.ForEach(x => x.SelectTarget()); //すべてture
+            }
+        }
+        else
+        {
+            InstantiateTargetButton(m_currentCommandActor, false);
+            TargetButtonController.OthersTargetButton.First().SelectTarget();//一つをture
+        }
+    }
+    /// <summary>
+    /// ターゲットボタンを生成しセットアップする
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="canSelect"></param>
+    void InstantiateTargetButton(BattleStatusControllerBase target, bool canSelect)
+    {
+        GameObject go = Instantiate(m_targetButtonPrefab, GameObject.FindWithTag("MainCanvas").transform);
+        go.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, target.CenterPosition.position);
+        go.GetComponent<TargetButtonController>().SetupTarget(target, canSelect);
+        //if (canSelect)
+        //{
+        //    targetUI.SetupTarget(target, TargetButtonController.m_othersTargetButton);
+        //}
+        //else
+        //{
+        //    targetUI.SetupTarget(target);
+        //}
+    }
+    /// <summary>
+    /// プレイヤー行動を実行
+    /// </summary>
+    public void PlayPlayerAction()
+    {
+        BattleStatusControllerBase[] targets = TargetButtonController.OthersTargetButton.Where(x => x.Selected).Select(x => x.ThisUnit).ToArray();
+        m_currentCommandActor.PlayerAction(m_currentCommandSkill, targets);
+
+        EndPlayerTargetSelect();
+    }
+    /// <summary>
+    /// 対象選択を終了
+    /// </summary>
+    void EndPlayerTargetSelect()
+    {
+        m_cancelTargetingButton.SetActive(false);//キャンセルボタン非表示
+        //ターゲットボタンの削除
+        TargetButtonController.OthersTargetButton.ForEach(x => Destroy(x.gameObject));
+        TargetButtonController.OthersTargetButton.Clear();
+        //m_currentCommandTargets.ForEach(x => Destroy(x.gameObject));
+        //m_currentCommandTargets.Clear();
+    }
+    /// <summary>
+    /// 対象選択をキャンセルしてコマンド選択に戻る
+    /// </summary>
+    public void CancelPlayerTargetSelect()
+    {
+        EndPlayerTargetSelect();
+        BeginPlayerCommandSelect();
     }
 
     /// <summary>
     /// バックカメラのフォロー対象を変え、アクティブにする
     /// </summary>
     /// <param name="targetPos"></param>
-    public void BeginBackCamera(Transform targetPos)
+    public void BeginPlayerBackCamera(Transform targetPos)
     {
         //if (targetPos == null) targetPos = m_normalFollowPosition;
         m_backCamera.Follow = targetPos;
         m_backCamera.gameObject.SetActive(true);
     }
-
     /// <summary>
     /// バックカメラを非アクティブにする
     /// </summary>
-    public void EndBackCamera()
+    public void EndPlayerBackCamera()
     {
         m_backCamera.gameObject.SetActive(false);
     }
@@ -386,6 +488,19 @@ public class BattleManager : MonoBehaviour
         GameObject go = Instantiate(m_ActionTextPrefab, GameObject.FindWithTag("MainCanvas").transform);
         go.GetComponentInChildren<TextMeshProUGUI>().text = actionText;
         DOTween.To(() => go.transform.localPosition - new Vector3(500, 0, 0), x => go.transform.localPosition = x, go.transform.localPosition, 0.05f);
+        Destroy(go, 1f);
+    }
+
+    /// <summary>
+    /// DamageTextを出す
+    /// </summary>
+    /// <param name="centerPos"></param>
+    /// <param name="damage"></param>
+    public void DamageText(Vector3 centerPos, int damage)
+    {
+        GameObject go = Instantiate(m_damageTextPrefab, GameObject.FindWithTag("MainCanvas").transform);
+        go.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, centerPos);
+        go.GetComponentInChildren<TextMeshProUGUI>().text = damage.ToString();
         Destroy(go, 1f);
     }
 }

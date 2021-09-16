@@ -9,6 +9,7 @@ using UnityEngine;
 public class BattlePlayerController : BattleStatusControllerBase
 {
     [SerializeField] GameObject m_statusIconPrefab = default;
+
     //[SerializeField] CinemachineVirtualCamera m_backCamera = default;
     //[SerializeField] ParticleSystem m_fireSwordParticle;
 
@@ -40,27 +41,30 @@ public class BattlePlayerController : BattleStatusControllerBase
     public override void BeginAction()
     {
         base.BeginAction();
-        BattleManager.Instance.BeginCommandSelect(m_havesSkills, this);
+        BattleManager.Instance.BeginPlayerCommandSelect(this);
         //m_backCamera.gameObject.SetActive(true);
-        BattleManager.Instance.BeginBackCamera(this.transform);
+        BattleManager.Instance.BeginPlayerBackCamera(this.transform);
     }
+    /// <summary>
+    /// 行動終了（player）
+    /// </summary>
     protected override void EndAction()
     {
         base.EndAction();
         //m_backCamera.gameObject.SetActive(false);
-        BattleManager.Instance.EndBackCamera();
+        BattleManager.Instance.EndPlayerBackCamera();
     }
 
     /// <summary>
-    /// 行動コマンド(Player)
+    /// 行動(Player)
     /// </summary>
-    public void PlayerActionCommand(SkillDatabase skill)
+    public void PlayerAction(SkillDatabase skill, BattleStatusControllerBase[] targets)
     {
-        BattleManager.Instance.EndCommandSelect();
+        //BattleManager.Instance.EndCommandSelect();//EndTargerSelect
         //N
         //m_CurrentSkill = skill;
-        skill.Effect(this, FindObjectsOfType<BattleEnemyController>());
-        UseSkill(skill);
+       // skill.Effect(this, FindObjectsOfType<BattleEnemyController>());
+        UseSkill(skill, targets);
         //UseSP(m_CurrentSkill.m_CostSP);
         //if (m_CurrentSkill.m_FireEffect)
         //{

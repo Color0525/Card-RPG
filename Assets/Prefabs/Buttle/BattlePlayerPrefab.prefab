@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5272943110201845264}
   m_Layer: 0
-  m_Name: HitPosition
+  m_Name: CenterPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1056497329403164915}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6668329273357491347}
@@ -702,15 +702,14 @@ MonoBehaviour:
   m_defensePower: 20
   m_havesSkills:
   - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
-  - {fileID: 11400000, guid: ebb8bcf936f806945bffa767bc8343bd, type: 2}
+  - {fileID: 11400000, guid: 33601ad3c7492954092009cd62e717e2, type: 2}
   - {fileID: 11400000, guid: 7db498c829c4eff4aa7b21c60117b6b9, type: 2}
-  - {fileID: 11400000, guid: e69b729f0eff21c4ca8eed118a303df3, type: 2}
+  - {fileID: 11400000, guid: ebb8bcf936f806945bffa767bc8343bd, type: 2}
   - {fileID: 11400000, guid: 39b429be2da506541bc16782f0c7c003, type: 2}
+  - {fileID: 11400000, guid: e69b729f0eff21c4ca8eed118a303df3, type: 2}
   - {fileID: 11400000, guid: 29d8b7594a1c1fe4c96033ced53d69af, type: 2}
   m_coolTimeIcon: {fileID: 21300000, guid: 047913b0f615a094eb08216d4ce013a3, type: 3}
-  m_damageTextPosition: {fileID: 5272943110201845264}
-  m_damageTextPrefab: {fileID: 8046955857244188895, guid: 5a36d68f2439e044b90c0a341c5e5732,
-    type: 3}
+  m_centerPosition: {fileID: 5272943110201845264}
   m_statusIcon: {fileID: 0}
   m_statusIconPrefab: {fileID: 2906720129903181303, guid: 508de3f176b66ef4e8100a0c6d0b592b,
     type: 3}

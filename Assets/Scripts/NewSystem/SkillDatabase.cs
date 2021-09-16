@@ -19,12 +19,19 @@ public class SkillDatabase : ScriptableObject
 
         //常時系200～
     }
+    public enum TargetRenge
+    {
+        Single,
+        Overall,
+        myself,
+    }
 
     [SerializeField] ID m_id = default;
     [SerializeField] string m_name = "None";
     [SerializeField] [Multiline(4)] string m_info = default;
     [SerializeField] int m_costSP = 0;
     [SerializeField] int m_costTime = 100;
+    [SerializeField] TargetRenge m_renge = default;
 
     //↓インスペクターで選択したスキルタイプ(ID)によって変わるように？
     //攻撃系なら有り
@@ -43,6 +50,7 @@ public class SkillDatabase : ScriptableObject
     public string Info { get { return m_info; } }
     public int CostSP { get { return m_costSP; } }
     public int CostTime { get { return m_costTime; } }
+    public TargetRenge Renge { get { return m_renge; } }
     public string StateName { get { return m_stateName; } }
     public Action<BattleStatusControllerBase, BattleStatusControllerBase[]> Effect { get { return m_effect; } }//m_idを変更した時ここに対応したスキル効果を入れる？
 

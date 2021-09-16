@@ -17,6 +17,7 @@ MonoBehaviour:
   m_info: "\u30AF\u30FC\u30EB50\u3002\n\u653B\u6483\u529B\xD70.5\u30C0\u30E1\u30FC\u30B8\u3002\n\u30AC\u30FC\u30C9\u309250\u524A\u308B\u3002"
   m_costSP: 2
   m_costTime: 50
+  m_renge: 0
   m_damageRate: 0.5
   m_breakPower: 50
   m_effectTime: -1

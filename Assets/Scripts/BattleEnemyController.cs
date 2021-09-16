@@ -26,9 +26,27 @@ public class BattleEnemyController : BattleStatusControllerBase
         //N
         //持っているスキルからランダムに使用
         SkillDatabase skill = m_havesSkills[Random.Range(0, m_havesSkills.Length)];
-        ////UseSP(m_CurrentSkill.m_CostSP); // 敵はSP消費なし
-        skill.Effect(this, FindObjectsOfType<BattlePlayerController>());
-        UseSkill(skill);
+        //対象範囲によってtargetを変える
+        BattleStatusControllerBase[] targets = default;
+        if (skill.Renge != SkillDatabase.TargetRenge.myself)
+        {
+            //List<BattlePlayerController> players = BattleManager.Instance.PlayerUnits; //findでも可
+            BattlePlayerController[] players = FindObjectsOfType<BattlePlayerController>();
+            if (skill.Renge == SkillDatabase.TargetRenge.Single)
+            {
+                targets = new BattleStatusControllerBase[] { players[Random.Range(0, players.Length)] };
+            }
+            else if (skill.Renge == SkillDatabase.TargetRenge.Overall)
+            {
+                targets = players;
+            }
+        }
+        else 
+        {
+            targets = new BattleStatusControllerBase[] { this };
+        }
+        UseSkill(skill, targets);
+        // 敵はSP消費なし
         //PlayStateAnimator(m_CurrentSkill);
     }
 

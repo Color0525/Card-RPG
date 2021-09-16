@@ -6,9 +6,6 @@ TagManager:
   tags:
   - Enemy
   - MainCanvas
-  - StatusPanel
-  - PlayersCoolTimeBar
-  - EnemysCoolTimeBar
   layers:
   - Default
   - TransparentFX

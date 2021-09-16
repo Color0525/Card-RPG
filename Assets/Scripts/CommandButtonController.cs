@@ -7,7 +7,10 @@ using UnityEngine;
 /// コマンドボタンを管理
 /// </summary>
 public class CommandButtonController : MonoBehaviour
-{ 
+{
+    static List<CommandButtonController> m_othersCommandButton = new List<CommandButtonController>();
+    static public List<CommandButtonController> OthersCommandButton => m_othersCommandButton;
+
     [SerializeField] TextMeshProUGUI m_commandName = default;
     [SerializeField] TextMeshProUGUI m_costSP = default;
     [SerializeField] AudioClip m_selectSE = default;
@@ -44,25 +47,30 @@ public class CommandButtonController : MonoBehaviour
         m_commandInfo = text;
         m_commandName.text = skill.Name;
         m_costSP.text = skill.CostSP.ToString() + "SP";
+        m_othersCommandButton.Add(this);
     }
 
     /// <summary>
-    /// ポイントされたとき呼ばれる
+    /// ポイントされたとき呼ばれ、コマンドの説明＆強調を表示
     /// </summary>
     public void ShowCommandInfo()
     {
-        m_commandInfo.text = m_currentSkill.Info;
-        m_anim.SetTrigger("Highlighted");
+        m_othersCommandButton.ForEach(x => x.HideCommandInfo());//すべて非選択に
+
+        m_commandInfo.text = m_currentSkill.Info;//これだけ選択
+        //m_anim.SetTrigger("Highlighted");
+        m_anim.SetBool("Show", true);
         PlaySE(m_selectSE);
     }
-    
+
     /// <summary>
-    /// ポイントが外れたとき呼ばれる
+    /// ポイントが外れたとき呼ばれ、コマンドの説明＆強調を非表示
     /// </summary>
     public void HideCommandInfo()
     {
         m_commandInfo.text = null;
-        m_anim.SetTrigger("Normal");
+        //m_anim.SetTrigger("Normal");
+        m_anim.SetBool("Show", false);
     }
 
     /// <summary>
@@ -70,16 +78,22 @@ public class CommandButtonController : MonoBehaviour
     /// </summary>
     public void PlayCommand()
     {
+        //BattleManager.Instance.BeginTargetSelect(c);
+
         if (m_currentSkill.CostSP <= m_actor.CurrentSP)
         {
-            m_actor.PlayerActionCommand(m_currentSkill);
+            BattleManager.Instance.BeginPlayerTargetSelect(m_currentSkill);
+
+            //m_actor.SelectSkillTarget(m_currentSkill);
+            //m_currentCommandSkill = skill;
         }
         else
         {
-            FindObjectOfType<BattleManager>().ShowActionText("SPが足りない！");
+            BattleManager.Instance.ShowActionText("SPが足りない！");
             PlaySE(m_ngSE);
         }
     }
+
 
     /// <summary>
     /// SEを再生

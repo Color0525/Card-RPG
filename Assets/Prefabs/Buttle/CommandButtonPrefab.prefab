@@ -85,9 +85,9 @@ GameObject:
   - component: {fileID: 4596506479027596016}
   - component: {fileID: 4596506479027596021}
   - component: {fileID: 4596506479027596023}
+  - component: {fileID: 4577114059287848691}
   - component: {fileID: 4596506479027596020}
   - component: {fileID: 8988963333364422714}
-  - component: {fileID: 4577114059287848691}
   - component: {fileID: 6972547217209083798}
   m_Layer: 5
   m_Name: CommandButtonPrefab
@@ -180,41 +180,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &4596506479027596020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4596506479027596017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21603da3c0a441a47b9266db9125e8f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_commandName: {fileID: 4596506479905907257}
-  m_costSP: {fileID: 3811573960617030361}
-  m_selectSE: {fileID: 8300000, guid: 487acab012e5d574a814572990cfe461, type: 3}
-  m_ngSE: {fileID: 8300000, guid: 11838f3db3b1a1b4db9c65e7abe21b32, type: 3}
---- !u!95 &8988963333364422714
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4596506479027596017}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 82a840c7a555eda499343d4ca354af26, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &4577114059287848691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,6 +223,41 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &4596506479027596020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4596506479027596017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21603da3c0a441a47b9266db9125e8f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_commandName: {fileID: 4596506479905907257}
+  m_costSP: {fileID: 3811573960617030361}
+  m_selectSE: {fileID: 8300000, guid: 487acab012e5d574a814572990cfe461, type: 3}
+  m_ngSE: {fileID: 8300000, guid: 11838f3db3b1a1b4db9c65e7abe21b32, type: 3}
+--- !u!95 &8988963333364422714
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4596506479027596017}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a123fefb64c828549a9b6051b5d974bf, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!82 &6972547217209083798
 AudioSource:
   m_ObjectHideFlags: 0
@@ -429,7 +429,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 4294967295
   m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3

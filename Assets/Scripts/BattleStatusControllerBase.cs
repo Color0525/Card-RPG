@@ -34,8 +34,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     //アイコン等
     [SerializeField] Sprite m_coolTimeIcon = default;
     //[SerializeField] Transform m_hitParticlePosition = default;
-    [SerializeField] Transform m_damageTextPosition = default;
-    [SerializeField] GameObject m_damageTextPrefab = default;//GMから出す？
+    [SerializeField] Transform m_centerPosition = default;
     [SerializeField] protected StatusIconController m_statusIcon = default;
 
     Animator m_anim;
@@ -72,9 +71,10 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     }
     public bool Alive { get { return m_alive; } }
     public Action TimeElapsedStatusEffect { get { return m_timeElapsedStatusEffect; } set { m_timeElapsedStatusEffect = value; } }
-    //public SkillDatabase[] HavesSkills { get { return m_havesSkills; } }
+    public SkillDatabase[] HavesSkills { get { return m_havesSkills; } }
     //N//public NSkillDatabaseScriptable m_CurrentSkill { get { return m_currentSkill; } set { m_currentSkill = value; } }
     public Sprite CoolTimeIcon { get { return m_coolTimeIcon; } }
+    public Transform CenterPosition { get { return m_centerPosition; } }
 
     void Start()
     {
@@ -128,9 +128,9 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// スキルを使う
     /// </summary>
     /// <param name="skill"></param>
-    protected void UseSkill(SkillDatabase skill)
+    protected void UseSkill(SkillDatabase skill, BattleStatusControllerBase[] targets)
     {
-        //選択機能ができたらここにm_CurrentSkill.Effect(this, targets);
+        skill.Effect(this, targets);
         UpdateSP(-skill.CostSP);
         UpdateCoolTime(skill.CostTime);
         BattleManager.Instance.ShowActionText(skill.Name); //スキル名を表示
@@ -188,7 +188,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public void Damage(int value)
     {
         UpdateHP(-value);
-        DamageText(m_damageTextPosition.position, value);
+        BattleManager.Instance.DamageText(m_centerPosition.position, value);
 
         if (m_currentHP == 0)
         {
@@ -338,18 +338,5 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
         //{
         //    m_battleManager.DeletePlayerList(this.gameObject.GetComponent<BattlePlayerController>());
         //}
-    }
-
-    /// <summary>
-    /// DamageTextを出す
-    /// </summary>
-    /// <param name="unitCanvas"></param>
-    /// <param name="damage"></param>
-    void DamageText(Vector3 unitCanvas, int damage)
-    {
-        GameObject go = Instantiate(m_damageTextPrefab, GameObject.FindWithTag("MainCanvas").transform);
-        go.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, unitCanvas);
-        go.GetComponentInChildren<TextMeshProUGUI>().text = damage.ToString();
-        Destroy(go, 1f);
     }
 }

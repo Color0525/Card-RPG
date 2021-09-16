@@ -17,8 +17,9 @@ MonoBehaviour:
   m_info: "\u30AF\u30FC\u30EB20\u3002\n400\u30AB\u30A6\u30F3\u30C8\u306E\u9593\n\u81EA\u8EAB\u306E\u653B\u6483\u529B1.1\u500D\u3002"
   m_costSP: 3
   m_costTime: 20
-  m_powerRate: 0
-  m_falterPower: 0
+  m_renge: 2
+  m_damageRate: 1
+  m_breakPower: 0
   m_effectTime: 400
   m_effectRete: 1.1
   m_stateName: Attack
