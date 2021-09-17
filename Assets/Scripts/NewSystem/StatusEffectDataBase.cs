@@ -137,7 +137,7 @@ public class Poison : StatusEffectDataBase
     }
     void PoisonDamage()//10カウント毎に、最大体力の5％分のダメージ
     {
-        if (m_effectTime % 10 == 0) { m_target.Damage(Mathf.CeilToInt(m_target.MaxHP * 0.05f)); Debug.Log("毒"); }
+        if (m_effectTime % 10 == 0) { m_target.Damage(Mathf.CeilToInt(m_target.MaxHP * 0.05f)); }
     }
 }
 

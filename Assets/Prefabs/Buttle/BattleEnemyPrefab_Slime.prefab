@@ -230,19 +230,18 @@ MonoBehaviour:
   m_currentHP: 100
   m_maxGuard: 100
   m_currentGuard: 100
-  m_maxSP: 0
-  m_currentSP: 0
+  m_actionPoint: 0
   m_coolTime: 0
   m_attackPower: 20
   m_defensePower: 15
   m_havesSkills:
   - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
   - {fileID: 11400000, guid: ebb8bcf936f806945bffa767bc8343bd, type: 2}
+  m_statusIcon: {fileID: 1187049678646948430}
   m_coolTimeIcon: {fileID: 21300000, guid: dabec6d990b13634b8d71cc11f9f3264, type: 3}
   m_centerPosition: {fileID: 6274321756026501440}
   m_damageTextPrefab: {fileID: 8046955857244188895, guid: 5a36d68f2439e044b90c0a341c5e5732,
     type: 3}
-  m_statusIcon: {fileID: 1187049678646948430}
   m_DeadParticlePrefab: {fileID: 8030796182266108582, guid: f8fafefb549d9424d94051995a68d80b,
     type: 3}
 --- !u!1001 &4192019529903506024
@@ -616,6 +615,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4393921000290046919, guid: f18d76a2347457c45883bbf08dea58aa,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 54.999584
       objectReference: {fileID: 0}
     - target: {fileID: 4756858153979215049, guid: f18d76a2347457c45883bbf08dea58aa,
         type: 3}

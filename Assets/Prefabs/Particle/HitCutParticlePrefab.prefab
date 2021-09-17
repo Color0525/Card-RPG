@@ -4663,7 +4663,7 @@ GameObject:
   - component: {fileID: 199622501077141480}
   - component: {fileID: 114187966190455476}
   m_Layer: 0
-  m_Name: HIt2ParticlePrefab
+  m_Name: HitCutParticlePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4677,7 +4677,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1995403933065894}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4215931314954582}

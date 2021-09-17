@@ -21,10 +21,10 @@ public class BattleEnemyController : BattleStatusControllerBase
     /// <summary>
     /// 行動終了（enemy）
     /// </summary>
-    protected override void EndAction()
+    public override void EndAction()
     {
-        ActInterrupt();//できるなら行動割り込み
         base.EndAction();
+        ActInterrupt();//できるなら行動割り込み
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ public class BattleEnemyController : BattleStatusControllerBase
         SkillDatabase skill = m_havesSkills[Random.Range(0, m_havesSkills.Length)];
         //対象範囲によってtargetを変える
         BattleStatusControllerBase[] targets = default;
-        if (skill.Renge != SkillDatabase.TargetRenge.myself)
+        if (skill.Renge != SkillDatabase.TargetRenge.Myself)
         {
             //List<BattlePlayerController> players = BattleManager.Instance.PlayerUnits.Where;
             BattlePlayerController[] players = FindObjectsOfType<BattlePlayerController>().Where(x => x.Alive).ToArray();
@@ -77,7 +77,7 @@ public class BattleEnemyController : BattleStatusControllerBase
 
     void Dead()//共通にして、敗カットシーンはカメラ移動だけ？
     {
-        Instantiate(m_DeadParticlePrefab, this.gameObject.transform.position, Quaternion.identity);
+        Instantiate(m_DeadParticlePrefab, this.m_centerPosition.position, Quaternion.identity);
         this.gameObject.SetActive(false);
     }
 }

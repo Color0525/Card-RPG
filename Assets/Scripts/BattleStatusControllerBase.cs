@@ -33,11 +33,12 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     //スキル
     [SerializeField] protected SkillDatabase[] m_havesSkills;
     //Nいらない？//NSkillDatabaseScriptable m_currentSkill;
+    Action m_activate = default;
     //アイコン等
     [SerializeField] protected StatusIconController m_statusIcon = default;
     [SerializeField] Sprite m_coolTimeIcon = default;
     //[SerializeField] Transform m_hitParticlePosition = default;
-    [SerializeField] Transform m_centerPosition = default;
+    [SerializeField] protected Transform m_centerPosition = default;
     [SerializeField] GameObject m_damageTextPrefab = default;
 
     Animator m_anim;
@@ -122,9 +123,9 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// <summary>
     /// 行動終了
     /// </summary>
-    protected virtual void EndAction()//アニメイベントのEndにいれる？
+    public virtual void EndAction()
     {
-        BattleManager.Instance.ReturnWaitTime();
+
     }
 
     //N
@@ -134,34 +135,35 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// <param name="skill"></param>
     protected void UseSkill(SkillDatabase skill, BattleStatusControllerBase[] targets)
     {
-        skill.Effect(this, targets);
+        m_activate = () => skill.Effect(this, targets);
         //UpdateSP(-skill.CostSP);
         UpdateCoolTimeValue(skill.CostTime);
         BattleManager.Instance.ShowActionText(skill.Name); //スキル名を表示
         m_anim.Play(skill.StateName);//アニメーション起動
     }
 
-    /// <summary>
-    /// 指定したスキルのステートをプレイ
-    /// </summary>
-    /// <param name="sutateName"></param>
-    public void PlayStateAnimator(SkillData skill)
+    ///// <summary>
+    ///// 指定したスキルのステートをプレイ
+    ///// </summary>
+    ///// <param name="sutateName"></param>
+    //public void PlayStateAnimator(SkillData skill)
+    //{
+    //    BattleManager.Instance.ShowActionText(skill.m_SkillName);
+    //    m_anim.Play(skill.m_StateName);
+    //}
+    public void Activate()// Attackアニメイベント 
     {
-        BattleManager.Instance.ShowActionText(skill.m_SkillName);
-        m_anim.Play(skill.m_StateName);
-    }
-    public virtual void Hit(BattleStatusControllerBase target = null)// Attackアニメイベント 
-    {
-        //N　一時的にアニメーション開始と同時にダメージにしている
+        //N　
+        m_activate();
         //if (target)
         //{
         //    Instantiate(m_CurrentSkill.m_HitEffectPrefab, target.m_hitParticlePosition.position, m_CurrentSkill.m_HitEffectPrefab.transform.rotation);
         //    Attack(target, m_CurrentSkill.GetPowerRate(this));
         //}
     }
-    public virtual void End()//Attackアニメイベント 
+    public void End()//Attackアニメイベント 
     {
-        EndAction();
+        StartCoroutine(BattleManager.Instance.ReturnWaitTime());
     }
 
     /// <summary>
@@ -339,7 +341,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
         effect.AddEffect();
         m_statesEffects.Add(effect);
         m_statusIcon.AddStatusEffectDisplay(effect);
-        Debug.Log($"{this.m_name} {effect.ToString()} 付与");
+        //＜状態効果によるアイコンやパーティクル表示、アニメ変更
     }
     /// <summary>
     /// 状態効果を削除する
@@ -350,7 +352,6 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
         effect.RemoveEffect();
         m_statesEffects.Remove(effect);
         m_statusIcon.RemoveStatusEffectDisplay(effect);
-        Debug.Log($"{this.m_name} {effect.ToString()} 解除");
     }
 
     /// <summary>
@@ -381,8 +382,8 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public void DamageText(Vector3 unitCenterPos, int damage)
     {
         GameObject go = Instantiate(m_damageTextPrefab, GameObject.FindWithTag("MainCanvas").transform);
-        Vector3 nearRamdom = new Vector3(unitCenterPos.x + Random.Range(-0.5f, 0.5f), unitCenterPos.y + Random.Range(-0.5f, 0.5f), unitCenterPos.z + Random.Range(-0.5f, 0.5f));
-        go.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, nearRamdom);
+        //Vector3 nearRamdom = new Vector3(unitCenterPos.x + Random.Range(-0.5f, 0.5f), unitCenterPos.y + Random.Range(-0.5f, 0.5f), unitCenterPos.z + Random.Range(-0.5f, 0.5f));
+        go.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, unitCenterPos);
         go.GetComponentInChildren<TextMeshProUGUI>().text = damage.ToString();
         Destroy(go, 1f);
     }

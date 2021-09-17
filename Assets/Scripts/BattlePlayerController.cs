@@ -38,14 +38,14 @@ public class BattlePlayerController : BattleStatusControllerBase
     public override void BeginAction()
     {
         base.BeginAction();
-        BattleManager.Instance.BeginPlayerCommandSelect(this);
+        BattleManager.Instance.BeginPlayerCommandSelect();
         //m_backCamera.gameObject.SetActive(true);
         BattleManager.Instance.BeginPlayerBackCamera(this.transform);
     }
     /// <summary>
     /// 行動終了（player）
     /// </summary>
-    protected override void EndAction()
+    public override void EndAction()
     {
         base.EndAction();
         //m_backCamera.gameObject.SetActive(false);

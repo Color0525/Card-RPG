@@ -22866,7 +22866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_battleState: 0
-  m_timeUpdateInterval: 0.05
+  m_timeUpdateInterval: 0.1
   m_playerPrefabs:
   - {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2, type: 3}
   - {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2, type: 3}
@@ -22902,8 +22902,6 @@ MonoBehaviour:
   m_targetButtonPrefab: {fileID: 2359560876183557354, guid: 54fe3c7716fc30549b4e272b4ab75622,
     type: 3}
   m_ActionTextPrefab: {fileID: 6233094090628478389, guid: 80fc31acf8e02954db089f1c1bf1f19d,
-    type: 3}
-  m_damageTextPrefab: {fileID: 8046955857244188895, guid: 5a36d68f2439e044b90c0a341c5e5732,
     type: 3}
   m_winCutScene: {fileID: 248272138}
   m_loseCutScene: {fileID: 500898969}

@@ -53,9 +53,11 @@ public class BattleManager : MonoBehaviour
     [SerializeField] List<BattleStatusControllerBase> m_allUnits = new List<BattleStatusControllerBase>();
     //優先して行動するユニット
     [SerializeField] List<BattleStatusControllerBase> m_priorityUnit = new List<BattleStatusControllerBase>();
-    //コマンド使用者
-    BattlePlayerController m_currentCommandActor = default;
+    //現在行動ユニット
+    BattleStatusControllerBase m_currentActor = default;
+    //コマンド選択スキル
     SkillDatabase m_currentCommandSkill = default;
+    //BattlePlayerController m_currentCommandActor = default;
     //List<TargetButtonController> m_currentCommandTargets = new List<TargetButtonController>();
     /// <summary>
     /// m_allUnitに対応する現在の行動ユニット番号
@@ -64,7 +66,7 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// バトル中か
     /// </summary>
-    //N//bool m_inBattle = true;
+    bool m_inBattle = true;
     /// <summary>
     /// 勝利したか
     /// </summary>
@@ -72,9 +74,10 @@ public class BattleManager : MonoBehaviour
     //ユニットの位置
     [SerializeField] Transform[] m_playerBattlePosition = default;
     [SerializeField] Transform[] m_enemyBattlePosition = default;
-    //開始演出
+    //ディレイ
     //[SerializeField] CinemachineVirtualCamera m_beginBattleCamera = default;
     [SerializeField] float m_beginBattleTime = 2f;
+    [SerializeField] float m_actionDelayTime = 1f;
     //UI
     [SerializeField] CinemachineVirtualCamera m_mainCamera = default;
     [SerializeField] CinemachineVirtualCamera m_backCamera = default;
@@ -91,8 +94,6 @@ public class BattleManager : MonoBehaviour
     //カットシーン
     [SerializeField] PlayableDirector m_winCutScene = default;
     [SerializeField] PlayableDirector m_loseCutScene = default;
-    //ディレイ
-    //N//[SerializeField] float m_delayAtEndTurn = 1f;
 
 
     void Start()
@@ -140,7 +141,7 @@ public class BattleManager : MonoBehaviour
         //    m_allUnits.Add(enemy.GetComponent<BattleStatusControllerBase>());
         //}
 
-        //戦闘開始演出（最後にWaitTimeにする）
+        //戦闘開始演出
         StartCoroutine(BeginBattle(m_beginBattleTime));
     }
 
@@ -153,6 +154,12 @@ public class BattleManager : MonoBehaviour
                 break;
 
             case BattleState.WaitTime://一定時間おきにクールを減らし、クールタイムが0になったユニットから現在ユニット行動開始
+                if (!m_inBattle)
+                {
+                    m_battleState = BattleState.EndBattle;
+                    return;
+                }
+
                 m_timeCount += Time.deltaTime;
                 if (m_timeCount > m_timeUpdateInterval)
                 {
@@ -161,9 +168,10 @@ public class BattleManager : MonoBehaviour
                     //優先ユニットの行動
                     if (m_priorityUnit.Count > 0)
                     {
-                        m_battleState = BattleState.InAction;
-                        m_priorityUnit[0].BeginAction();
+                        m_currentActor = m_priorityUnit[0];
                         m_priorityUnit.RemoveAt(0);
+                        m_battleState = BattleState.InAction;
+                        m_currentActor.BeginAction();
                         return;
                     }
 
@@ -172,8 +180,9 @@ public class BattleManager : MonoBehaviour
                     BattleStatusControllerBase[] actor = m_allUnits.Where(x => x.Alive).Where(x => x.CoolTime <= 0).ToArray();
                     if (actor.Length > 0)
                     {
+                        m_currentActor = actor[0];
                         m_battleState = BattleState.InAction;
-                        actor[0].BeginAction();
+                        m_currentActor.BeginAction();
                         return;
                     }
 
@@ -271,7 +280,7 @@ public class BattleManager : MonoBehaviour
         m_enemyUnits.ForEach(x => x.SetupIcon(m_coolTimePanel));//アイコンセットアップ
         m_playerUnits.ForEach(x => x.InstantiateStatusIcon(m_pleyerStatusPanel));//アイコン生成
         m_playerUnits.ForEach(x => x.SetupIcon(m_coolTimePanel));//アイコンセットアップ
-        yield return new WaitForSeconds(Camera.main.gameObject.GetComponent<CinemachineBrain>().m_DefaultBlend.BlendTime);
+        //yield return new WaitForSeconds(Camera.main.gameObject.GetComponent<CinemachineBrain>().m_DefaultBlend.BlendTime);
         m_battleState = BattleState.WaitTime;
     }
 
@@ -283,15 +292,25 @@ public class BattleManager : MonoBehaviour
     //{
     //    m_battleState = BattleState.InAction;
     //}
-
+    ///// <summary>
+    ///// 待機時間に戻る
+    ///// </summary>
+    //public void ReturnWaitTime()
+    //{
+    //    m_battleState = BattleState.WaitTime;
+    //    m_timeCount = -m_actionDelayTime;//Delayを与える
+    //    //m_mainButtleCamera.Follow = m_normalFollowPosition.gameObject.transform;
+    //    //N//StartCoroutine(DelayAndUpdateState(m_delayAtEndTurn, BattleState.EndBattle));//コルーチンやめてEndTurのカウントでディレイをかける
+    //}
     /// <summary>
-    /// 待機時間に戻る
+    /// Delayし、待機時間に戻る
     /// </summary>
-    public void ReturnWaitTime()
+    /// <returns></returns>
+    public IEnumerator ReturnWaitTime()
     {
+        yield return new WaitForSeconds(m_actionDelayTime);
         m_battleState = BattleState.WaitTime;
-        //m_mainButtleCamera.Follow = m_normalFollowPosition.gameObject.transform;
-        //N//StartCoroutine(DelayAndUpdateState(m_delayAtEndTurn, BattleState.EndBattle));//コルーチンやめてEndTurのカウントでディレイをかける
+        m_currentActor.EndAction();
     }
 
     /// <summary>
@@ -303,33 +322,20 @@ public class BattleManager : MonoBehaviour
         m_priorityUnit.Add(unit);
     }
 
-    //N
-    ///// <summary>
-    ///// Delayし、戦闘状態を更新する
-    ///// </summary>
-    ///// <param name="delayTime"></param>
-    ///// <param name="state"></param>
-    ///// <returns></returns>
-    //IEnumerator DelayAndUpdateState(float delayTime, BattleState state)
-    //{
-    //    yield return new WaitForSeconds(delayTime);
-    //    m_battleState = state;
-    //}
-
     /// <summary>
     /// コマンドセレクトを開始する
     /// </summary>
     /// <param name="actor"></param>
-    public void BeginPlayerCommandSelect(BattlePlayerController actor = null)
+    public void BeginPlayerCommandSelect()//BattlePlayerController actor = null)
     {
-        if (actor != null)
-        {
-            m_currentCommandActor = actor;
-        }
+        //if (actor != null)
+        //{
+        //    m_currentCommandActor = actor;
+        //}
 
         m_commandWindow.SetActive(true);
 
-        foreach (var skill in m_currentCommandActor.HavesSkills)
+        foreach (var skill in m_currentActor.HavesSkills)
         {
             GameObject go = Instantiate(m_commandButtonPrefab, m_commandArea);
             go.GetComponent<CommandButtonController>().SetupCammand(skill, /*m_currentCommandActor,*/ m_commandInfoText);
@@ -360,7 +366,7 @@ public class BattleManager : MonoBehaviour
 
         m_currentCommandSkill = skill;
 
-        if (skill.Renge != SkillDatabase.TargetRenge.myself)
+        if (skill.Renge != SkillDatabase.TargetRenge.Myself)
         {
             if (skill.Renge == SkillDatabase.TargetRenge.Single)
             {
@@ -383,7 +389,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            InstantiateTargetButton(m_currentCommandActor, false);
+            InstantiateTargetButton(m_currentActor, false);
             TargetButtonController.OthersTargetButton.First().SelectTarget();//一つをture
         }
     }
@@ -412,7 +418,7 @@ public class BattleManager : MonoBehaviour
     public void PlayPlayerAction()
     {
         BattleStatusControllerBase[] targets = TargetButtonController.OthersTargetButton.Where(x => x.Selected).Select(x => x.ThisUnit).ToArray();
-        m_currentCommandActor.PlayerAction(m_currentCommandSkill, targets);
+        m_currentActor.GetComponent<BattlePlayerController>().PlayerAction(m_currentCommandSkill, targets);
 
         EndPlayerTargetSelect();
     }
@@ -497,7 +503,7 @@ public class BattleManager : MonoBehaviour
         {
             if (!m_enemyUnits.Any(x => x.Alive == true))//生きているユニットがいるのでは無いなら
             {
-                m_battleState = BattleState.EndBattle;
+                m_inBattle = false;
                 m_won = true;
             }
         }
@@ -505,7 +511,7 @@ public class BattleManager : MonoBehaviour
         {
             if (!m_playerUnits.Any(x => x.Alive == true))//生きているユニットがいるのでは無いなら
             {
-                m_battleState = BattleState.EndBattle;
+                m_inBattle = false;
                 m_won = false;
             }
         }
