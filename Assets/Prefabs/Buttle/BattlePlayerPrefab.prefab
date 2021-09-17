@@ -695,8 +695,7 @@ MonoBehaviour:
   m_currentHP: 150
   m_maxGuard: 100
   m_currentGuard: 100
-  m_maxSP: 20
-  m_currentSP: 20
+  m_actionPoint: 0
   m_coolTime: 0
   m_attackPower: 20
   m_defensePower: 20
@@ -708,9 +707,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 39b429be2da506541bc16782f0c7c003, type: 2}
   - {fileID: 11400000, guid: e69b729f0eff21c4ca8eed118a303df3, type: 2}
   - {fileID: 11400000, guid: 29d8b7594a1c1fe4c96033ced53d69af, type: 2}
+  m_statusIcon: {fileID: 0}
   m_coolTimeIcon: {fileID: 21300000, guid: 047913b0f615a094eb08216d4ce013a3, type: 3}
   m_centerPosition: {fileID: 5272943110201845264}
-  m_statusIcon: {fileID: 0}
+  m_damageTextPrefab: {fileID: 8046955857244188895, guid: 5a36d68f2439e044b90c0a341c5e5732,
+    type: 3}
   m_statusIconPrefab: {fileID: 2906720129903181303, guid: 508de3f176b66ef4e8100a0c6d0b592b,
     type: 3}
 --- !u!1 &6668329273356992693

@@ -18,10 +18,12 @@ public class StatusIconController : MonoBehaviour
     [SerializeField] protected GameObject m_coolTimeBarPrefab = default;
     protected Slider m_coolTimeBar = default;
     protected TextMeshProUGUI m_coolTimeValue = default;
+    [SerializeField] Transform m_statusEffectPanel = default;
+    [SerializeField] GameObject m_statusEffectDisplayPrefab = default;
     //protected Transform m_coolTimeBarPanel = default;
     int m_maxCoolTimeBar = 200;
 
-    protected float m_effectTime = 0.2f;
+    protected float m_moveTime = 0.2f;
 
     public virtual void Awake()
     {
@@ -78,7 +80,7 @@ public class StatusIconController : MonoBehaviour
     public virtual void UpdateHPBar(int maxHP, int currentHP)
     {
         //バーを現在値の比率までなめらかに変化させる
-        m_HPBar.DOValue((float)currentHP / (float)maxHP, m_effectTime);
+        m_HPBar.DOValue((float)currentHP / (float)maxHP, m_moveTime);
     }
 
     /// <summary>
@@ -89,7 +91,7 @@ public class StatusIconController : MonoBehaviour
     public virtual void UpdateGuardBar(int maxGuard, int currentGuard)
     {
         //バーを現在値の比率までなめらかに変化させる
-        m_guardBar.DOValue((float)currentGuard / (float)maxGuard, m_effectTime);
+        m_guardBar.DOValue((float)currentGuard / (float)maxGuard, m_moveTime);
     }
 
     ///// <summary>
@@ -110,20 +112,48 @@ public class StatusIconController : MonoBehaviour
     public void UpdateActionPointDisplay(int actionPoint)
     {
         //値を現在値までなめらかに変化させる
-        DOTween.To(() => int.Parse(m_actionPointValue.text), x => m_actionPointValue.text = x.ToString(), actionPoint, m_effectTime);
+        DOTween.To(() => int.Parse(m_actionPointValue.text), x => m_actionPointValue.text = x.ToString(), actionPoint, m_moveTime);
     }
 
+    /// <summary>
+    /// クールタイムバーを更新
+    /// </summary>
+    /// <param name="coolTime"></param>
     public void UpdateCoolTimeBar(int coolTime)
     {
         //バーを現在値の比率までなめらかに変化させる//クールタイムバーの最大値はm_maxCoolTimeBarにする
-        m_coolTimeBar.DOValue((float)coolTime / (float)m_maxCoolTimeBar, m_effectTime);
+        m_coolTimeBar.DOValue((float)coolTime / (float)m_maxCoolTimeBar, m_moveTime);
 
         //小さい順に
 
         //値を現在値までなめらかに変化させる
-        DOTween.To(() => int.Parse(m_coolTimeValue.text), x => m_coolTimeValue.text = x.ToString(), coolTime, m_effectTime);
+        DOTween.To(() => int.Parse(m_coolTimeValue.text), x => m_coolTimeValue.text = x.ToString(), coolTime, m_moveTime);
     }
 
+    /// <summary>
+    /// 状態効果テキストを追加
+    /// </summary>
+    /// <param name="effect"></param>
+    public void AddStatusEffectDisplay(StatusEffectDataBase effect)
+    {
+        TextMeshProUGUI effectText = Instantiate(m_statusEffectDisplayPrefab, m_statusEffectPanel).GetComponentInChildren<TextMeshProUGUI>();
+        effectText.text = effect.EffectName;
+    }
+    /// <summary>
+    /// 状態効果テキストを削除
+    /// </summary>
+    /// <param name="effect"></param>
+    public void RemoveStatusEffectDisplay(StatusEffectDataBase effect)
+    {
+        foreach (Transform child in m_statusEffectPanel)
+        {
+            if (child.GetComponentInChildren<TextMeshProUGUI>().text == effect.EffectName)
+            {
+                Destroy(child.gameObject);
+                return;
+            }
+        }
+    }
 
     //if (m_noMoveEffect)
     //{

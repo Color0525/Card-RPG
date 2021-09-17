@@ -76,12 +76,12 @@ public class PlayerStatusIconController : StatusIconController
 
         //バーが飛び出すアニメ
         m_HPBar.transform.DOScale(new Vector3(1.5f, 0.9f, 1), 0.05f);
-        m_HPBar.transform.DOScale(1f, 0.1f).SetDelay(m_effectTime);
+        m_HPBar.transform.DOScale(1f, 0.1f).SetDelay(m_moveTime);
 
         //減るときは赤く、回復するときは緑などの演出追加？
 
         //値を現在値までなめらかに変化させる
-        DOTween.To(() => int.Parse(m_HPValue.text), x => m_HPValue.text = x.ToString(), currentHP, m_effectTime);
+        DOTween.To(() => int.Parse(m_HPValue.text), x => m_HPValue.text = x.ToString(), currentHP, m_moveTime);
     }
 
     /// <summary>
@@ -94,12 +94,12 @@ public class PlayerStatusIconController : StatusIconController
         //バーが飛び出すアニメ
         m_guardBar.transform.DOScale(new Vector3(1.5f, 0.9f, 1), 0.05f);
         base.UpdateGuardBar(maxGuard, currentGuard);
-        m_guardBar.transform.DOScale(1f, 0.1f).SetDelay(m_effectTime);
+        m_guardBar.transform.DOScale(1f, 0.1f).SetDelay(m_moveTime);
 
         //0になった時ガラスが割れるような演出追加？
 
         //値を現在値までなめらかに変化させる
-        DOTween.To(() => int.Parse(m_guardValue.text), x => m_guardValue.text = x.ToString(), currentGuard, m_effectTime);
+        DOTween.To(() => int.Parse(m_guardValue.text), x => m_guardValue.text = x.ToString(), currentGuard, m_moveTime);
     }
 
     ///// <summary>

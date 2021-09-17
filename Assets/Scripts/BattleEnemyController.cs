@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -38,8 +39,8 @@ public class BattleEnemyController : BattleStatusControllerBase
         BattleStatusControllerBase[] targets = default;
         if (skill.Renge != SkillDatabase.TargetRenge.myself)
         {
-            //List<BattlePlayerController> players = BattleManager.Instance.PlayerUnits; //findでも可
-            BattlePlayerController[] players = FindObjectsOfType<BattlePlayerController>();
+            //List<BattlePlayerController> players = BattleManager.Instance.PlayerUnits.Where;
+            BattlePlayerController[] players = FindObjectsOfType<BattlePlayerController>().Where(x => x.Alive).ToArray();
             if (skill.Renge == SkillDatabase.TargetRenge.Single)
             {
                 targets = new BattleStatusControllerBase[] { players[Random.Range(0, players.Length)] };

@@ -7,8 +7,10 @@ public abstract class StatusEffectDataBase
 {
     protected BattleStatusControllerBase m_target = default;
     protected int m_effectTime = -1;
+    protected string m_effectName = null;
     protected Action m_addEffect = default;
     protected Action m_removeEffect = default;
+    public string EffectName { get { return m_effectName; } }
     public Action AddEffect { get { return m_addEffect; } }
     public Action RemoveEffect { get { return m_removeEffect; } }
 
@@ -91,6 +93,7 @@ public class Down : StatusEffectDataBase
 {
     public Down(BattleStatusControllerBase target) : base(target)
     {
+        m_effectName = "ダウン";
         m_addEffect += () =>
         {
             m_target.IncreaseCoolTime(30);
@@ -127,11 +130,12 @@ public class Poison : StatusEffectDataBase
 {
     public Poison(BattleStatusControllerBase target, int effectTime = -1) : base(target)
     {
+        m_effectName = "毒";
         m_addEffect += () => m_target.TimeElapsedStatusEffect += PoisonDamage;
         m_removeEffect += () => m_target.TimeElapsedStatusEffect -= PoisonDamage;
         SetEffectTime(effectTime);
     }
-    void PoisonDamage()//10カウントに一度、最大体力の5％分のダメージ
+    void PoisonDamage()//10カウント毎に、最大体力の5％分のダメージ
     {
         if (m_effectTime % 10 == 0) { m_target.Damage(Mathf.CeilToInt(m_target.MaxHP * 0.05f)); Debug.Log("毒"); }
     }
@@ -142,6 +146,7 @@ public class AttackUp : StatusEffectDataBase
     //float m_effectRate = 1;
     public AttackUp(float effectRate, BattleStatusControllerBase target, int effectTime = -1) : base(target)
     {
+        m_effectName = $"攻撃力{effectRate}倍";
         m_addEffect += () => m_target.AttackPowerRate.Add(effectRate);
         m_removeEffect += () => m_target.AttackPowerRate.Remove(effectRate);
         SetEffectTime(effectTime);

@@ -88,7 +88,6 @@ public class BattleManager : MonoBehaviour
     [SerializeField] GameObject m_cancelTargetingButton = default;
     [SerializeField] GameObject m_targetButtonPrefab = default;
     [SerializeField] GameObject m_ActionTextPrefab = default;
-    [SerializeField] GameObject m_damageTextPrefab = default;
     //カットシーン
     [SerializeField] PlayableDirector m_winCutScene = default;
     [SerializeField] PlayableDirector m_loseCutScene = default;
@@ -521,19 +520,6 @@ public class BattleManager : MonoBehaviour
         GameObject go = Instantiate(m_ActionTextPrefab, GameObject.FindWithTag("MainCanvas").transform);
         go.GetComponentInChildren<TextMeshProUGUI>().text = actionText;
         DOTween.To(() => go.transform.localPosition - new Vector3(500, 0, 0), x => go.transform.localPosition = x, go.transform.localPosition, 0.05f);
-        Destroy(go, 1f);
-    }
-
-    /// <summary>
-    /// DamageTextを出す
-    /// </summary>
-    /// <param name="centerPos"></param>
-    /// <param name="damage"></param>
-    public void DamageText(Vector3 centerPos, int damage)
-    {
-        GameObject go = Instantiate(m_damageTextPrefab, GameObject.FindWithTag("MainCanvas").transform);
-        go.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, centerPos);
-        go.GetComponentInChildren<TextMeshProUGUI>().text = damage.ToString();
         Destroy(go, 1f);
     }
 }

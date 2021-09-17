@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// 戦闘ユニットのステータス管理（継承用）
@@ -33,10 +34,11 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     [SerializeField] protected SkillDatabase[] m_havesSkills;
     //Nいらない？//NSkillDatabaseScriptable m_currentSkill;
     //アイコン等
+    [SerializeField] protected StatusIconController m_statusIcon = default;
     [SerializeField] Sprite m_coolTimeIcon = default;
     //[SerializeField] Transform m_hitParticlePosition = default;
     [SerializeField] Transform m_centerPosition = default;
-    [SerializeField] protected StatusIconController m_statusIcon = default;
+    [SerializeField] GameObject m_damageTextPrefab = default;
 
     Animator m_anim;
 
@@ -203,7 +205,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public void Damage(int value)
     {
         UpdateHP(-value);
-        BattleManager.Instance.DamageText(m_centerPosition.position, value);
+        DamageText(m_centerPosition.position, value);
 
         if (m_currentHP == 0)
         {
@@ -334,8 +336,9 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public void AddStatesEffect(StatusEffectDataBase effect)
     {
         //NStatusEffectDataBase effect = new NStatusEffectDataBase(this, id, effectTime, effectPower);
-        m_statesEffects.Add(effect);
         effect.AddEffect();
+        m_statesEffects.Add(effect);
+        m_statusIcon.AddStatusEffectDisplay(effect);
         Debug.Log($"{this.m_name} {effect.ToString()} 付与");
     }
     /// <summary>
@@ -346,6 +349,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     {
         effect.RemoveEffect();
         m_statesEffects.Remove(effect);
+        m_statusIcon.RemoveStatusEffectDisplay(effect);
         Debug.Log($"{this.m_name} {effect.ToString()} 解除");
     }
 
@@ -367,5 +371,19 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
         //{
         //    m_battleManager.DeletePlayerList(this.gameObject.GetComponent<BattlePlayerController>());
         //}
+    }
+
+    /// <summary>
+    /// DamageTextを出す
+    /// </summary>
+    /// <param name="unitCenterPos"></param>
+    /// <param name="damage"></param>
+    public void DamageText(Vector3 unitCenterPos, int damage)
+    {
+        GameObject go = Instantiate(m_damageTextPrefab, GameObject.FindWithTag("MainCanvas").transform);
+        Vector3 nearRamdom = new Vector3(unitCenterPos.x + Random.Range(-0.5f, 0.5f), unitCenterPos.y + Random.Range(-0.5f, 0.5f), unitCenterPos.z + Random.Range(-0.5f, 0.5f));
+        go.GetComponent<RectTransform>().position = RectTransformUtility.WorldToScreenPoint(Camera.main, nearRamdom);
+        go.GetComponentInChildren<TextMeshProUGUI>().text = damage.ToString();
+        Destroy(go, 1f);
     }
 }
