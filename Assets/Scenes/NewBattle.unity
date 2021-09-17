@@ -22888,6 +22888,7 @@ MonoBehaviour:
   - {fileID: 902042674}
   - {fileID: 218554560}
   m_beginBattleTime: 2
+  m_actionDelayTime: 1
   m_mainCamera: {fileID: 2041342223}
   m_backCamera: {fileID: 627568923}
   m_cameraTargetGroup: {fileID: 348398810}

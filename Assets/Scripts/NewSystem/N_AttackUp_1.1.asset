@@ -21,4 +21,5 @@ MonoBehaviour:
   m_breakPower: 0
   m_effectTime: 400
   m_effectRete: 1.1
+  m_hitEffectPrefab: {fileID: 100000, guid: c88425e4ba62b264e985391d85d74f1a, type: 3}
   m_stateName: Attack
