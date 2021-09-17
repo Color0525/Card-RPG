@@ -17,9 +17,10 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     [SerializeField] int m_currentHP = 100;
     [SerializeField] int m_maxGuard = 100;
     [SerializeField] int m_currentGuard = 100;
-    [SerializeField] int m_maxSP = 0;
-    [SerializeField] int m_currentSP = 0;
-    [SerializeField] float m_coolTime = 0;
+    //[SerializeField] int m_maxSP = 0;
+    //[SerializeField] int m_currentSP = 0;
+    [SerializeField] int m_actionPoint = 0;
+    [SerializeField] int m_coolTime = 0;
     [SerializeField] int m_attackPower = 20;
     List<float> m_attackPowerRate = new List<float>();
     [SerializeField] int m_defensePower = 20;
@@ -45,9 +46,10 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public int CurrentHP { get { return m_currentHP; } }
     public int MaxGuard { get { return m_maxGuard; } }
     public int CurrentGuard { get { return m_currentGuard; } }
-    public int MaxSP { get { return m_maxSP; } }
-    public int CurrentSP { get { return m_currentSP; } }
-    public float CoolTime { get { return m_coolTime; } }
+    //public int MaxSP { get { return m_maxSP; } }
+    //public int CurrentSP { get { return m_currentSP; } }
+    public int ActionPoint { get { return m_actionPoint; } }
+    public int CoolTime { get { return m_coolTime; } }
     public int AttackPower { get { return m_attackPower; } }
     public List<float> AttackPowerRate { get { return m_attackPowerRate; } }
     //public Func<int, float> FuncAttackPowerRate { get; set; } = n => n; 
@@ -85,7 +87,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// ステータスアイコン等をセットアップ
     /// </summary>
     /// <param name="coolTimePanel"></param>
-    public void SetupIcon(GameObject coolTimePanel)
+    public virtual void SetupIcon(GameObject coolTimePanel)
     {
         m_statusIcon.SetupStatus(this, coolTimePanel);
     }
@@ -118,7 +120,7 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// <summary>
     /// 行動終了
     /// </summary>
-    protected virtual void EndAction()
+    protected virtual void EndAction()//アニメイベントのEndにいれる？
     {
         BattleManager.Instance.ReturnWaitTime();
     }
@@ -131,8 +133,8 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     protected void UseSkill(SkillDatabase skill, BattleStatusControllerBase[] targets)
     {
         skill.Effect(this, targets);
-        UpdateSP(-skill.CostSP);
-        UpdateCoolTime(skill.CostTime);
+        //UpdateSP(-skill.CostSP);
+        UpdateCoolTimeValue(skill.CostTime);
         BattleManager.Instance.ShowActionText(skill.Name); //スキル名を表示
         m_anim.Play(skill.StateName);//アニメーション起動
     }
@@ -158,6 +160,19 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     public virtual void End()//Attackアニメイベント 
     {
         EndAction();
+    }
+
+    /// <summary>
+    /// CT以上のAPがあるなら、CTを0にしてAPをその分減らし、行動割り込みをする
+    /// </summary>
+    protected void ActInterrupt()
+    {
+        if (m_coolTime > 0 && m_coolTime <= m_actionPoint)
+        {
+            UpdateActionPointValue(-m_coolTime);
+            UpdateCoolTimeValue(-m_coolTime);
+            BattleManager.Instance.AddPriorityUnit(this);
+        }
     }
 
     //N
@@ -228,9 +243,9 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// クールタイム増加
     /// </summary>
     /// <param name="value"></param>
-    public void IncreaseCoolTime(float value)
+    public void IncreaseCoolTime(int value)
     {
-        UpdateCoolTime(value);
+        UpdateCoolTimeValue(value);
     }
 
     /// <summary>
@@ -238,7 +253,8 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
     /// </summary>
     public void TimeElapsed()
     {
-        UpdateCoolTime(-1);
+        UpdateCoolTimeValue(-1);
+        UpdateActionPointValue(1);
         if (m_timeElapsedStatusEffect != null)
         {
             m_timeElapsedStatusEffect();//状態変化listの経過時間も減らす
@@ -271,26 +287,39 @@ public abstract class BattleStatusControllerBase : MonoBehaviour
             m_statusIcon.UpdateGuardBar(m_maxGuard, m_currentGuard);//0ならゲージが破壊演出つけたい
         }
     }
+    ///// <summary>
+    ///// SPを更新
+    ///// </summary>
+    ///// <param name="value"></param>
+    //void UpdateSP(int value = 0)
+    //{
+    //    int before = m_currentSP;
+    //    m_currentSP = Mathf.Clamp(m_currentSP + value, 0, m_maxSP);
+    //    if (before != m_currentSP)
+    //    {
+    //        m_statusIcon.UpdateSPBar(m_maxSP, m_currentSP);
+    //    }
+    //}
     /// <summary>
-    /// SPを更新
+    /// アクションポイントを更新
     /// </summary>
     /// <param name="value"></param>
-    void UpdateSP(int value = 0)
+    void UpdateActionPointValue(int value = 0)
     {
-        int before = m_currentSP;
-        m_currentSP = Mathf.Clamp(m_currentSP + value, 0, m_maxSP);
-        if (before != m_currentSP)
+        int before = m_actionPoint;
+        m_actionPoint += value;
+        if (before != m_actionPoint)
         {
-            m_statusIcon.UpdateSPBar(m_maxSP, m_currentSP);
+            m_statusIcon.UpdateActionPointDisplay(m_actionPoint);
         }
     }
     /// <summary>
     /// クールタイムを更新
     /// </summary>
     /// <param name="value"></param>
-    void UpdateCoolTime(float value = 0)
+    void UpdateCoolTimeValue(int value = 0)
     {
-        float before = m_coolTime;
+        int before = m_coolTime;
         m_coolTime += value;
         if (before != m_coolTime)
         {

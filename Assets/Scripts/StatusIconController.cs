@@ -13,7 +13,8 @@ public class StatusIconController : MonoBehaviour
     //[SerializeField] bool m_noMoveEffect = true;
     [SerializeField] protected Slider m_HPBar = default;
     [SerializeField] protected Slider m_guardBar = default;
-    [SerializeField] protected Slider m_SPBar = default;
+    //[SerializeField] protected Slider m_SPBar = default;
+    [SerializeField] TextMeshProUGUI m_actionPointValue = default;
     [SerializeField] protected GameObject m_coolTimeBarPrefab = default;
     protected Slider m_coolTimeBar = default;
     protected TextMeshProUGUI m_coolTimeValue = default;
@@ -32,13 +33,24 @@ public class StatusIconController : MonoBehaviour
     /// </summary>
     /// <param name="status"></param>
     /// <param name="coolTimePanel"></param>
-    public virtual void SetupStatus(BattleStatusControllerBase status, GameObject coolTimePanel)
+    public void SetupStatus(BattleStatusControllerBase status, GameObject coolTimePanel)
     {
         UpdateHPBar(status.MaxHP, status.CurrentHP);
         UpdateGuardBar(status.MaxGuard, status.CurrentGuard);
-        UpdateSPBar(status.MaxSP, status.CurrentSP);
+        //UpdateSPBar(status.MaxSP, status.CurrentSP);
+        UpdateActionPointDisplay(status.ActionPoint);
 
-        //m_coolTimeBarPanel = coolTimePanel.transform.Find("Enemys");
+        InstantiateCoolTimeBar(status, coolTimePanel);
+        UpdateCoolTimeBar(status.CoolTime);
+    }
+
+    /// <summary>
+    /// クールタイムバーを生成
+    /// </summary>
+    /// <param name="status"></param>
+    /// <param name="coolTimePanel"></param>
+    protected virtual void InstantiateCoolTimeBar(BattleStatusControllerBase status, GameObject coolTimePanel)
+    {
         GameObject go = Instantiate(m_coolTimeBarPrefab, coolTimePanel.transform.Find("Enemys"));
         m_coolTimeBar = go.GetComponent<Slider>();
         m_coolTimeValue = go.GetComponentInChildren<TextMeshProUGUI>();//valueを参照
@@ -48,7 +60,6 @@ public class StatusIconController : MonoBehaviour
             if (child.name == "Frame") child.color = Color.magenta;//枠の色を変える
             else if (child.name == "UnitImage") child.sprite = status.CoolTimeIcon;//そのユニットのイメージに
         }
-        UpdateCoolTimeBar(status.CoolTime);
     }
 
     /// <summary>
@@ -81,26 +92,36 @@ public class StatusIconController : MonoBehaviour
         m_guardBar.DOValue((float)currentGuard / (float)maxGuard, m_effectTime);
     }
 
+    ///// <summary>
+    ///// SPBarを更新
+    ///// </summary>
+    ///// <param name="maxSP"></param>
+    ///// <param name="currentSP"></param>
+    //public virtual void UpdateSPBar(int maxSP, int currentSP)
+    //{
+    //    //バーを現在値の比率までなめらかに変化させる
+    //    m_SPBar.DOValue((float)currentSP / (float)maxSP, m_effectTime);
+    //}
+
     /// <summary>
-    /// SPBarを更新
+    /// アクションポイントを更新
     /// </summary>
-    /// <param name="maxSP"></param>
-    /// <param name="currentSP"></param>
-    public virtual void UpdateSPBar(int maxSP, int currentSP)
+    /// <param name="actionPoint"></param>
+    public void UpdateActionPointDisplay(int actionPoint)
     {
-        //バーを現在値の比率までなめらかに変化させる
-        m_SPBar.DOValue((float)currentSP / (float)maxSP, m_effectTime);
+        //値を現在値までなめらかに変化させる
+        DOTween.To(() => int.Parse(m_actionPointValue.text), x => m_actionPointValue.text = x.ToString(), actionPoint, m_effectTime);
     }
 
-    public void UpdateCoolTimeBar(float coolTime)
+    public void UpdateCoolTimeBar(int coolTime)
     {
         //バーを現在値の比率までなめらかに変化させる//クールタイムバーの最大値はm_maxCoolTimeBarにする
-        m_coolTimeBar.DOValue(coolTime / m_maxCoolTimeBar, m_effectTime);
+        m_coolTimeBar.DOValue((float)coolTime / (float)m_maxCoolTimeBar, m_effectTime);
 
         //小さい順に
 
         //値を現在値までなめらかに変化させる
-        DOTween.To(() => int.Parse(m_coolTimeValue.text), x => m_coolTimeValue.text = x.ToString(), (int)coolTime, m_effectTime);
+        DOTween.To(() => int.Parse(m_coolTimeValue.text), x => m_coolTimeValue.text = x.ToString(), coolTime, m_effectTime);
     }
 
 

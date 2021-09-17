@@ -14,26 +14,23 @@ public class BattlePlayerController : BattleStatusControllerBase
     //[SerializeField] ParticleSystem m_fireSwordParticle;
 
     /// <summary>
-    /// ステータスアイコンをパネルに入れ、セットアップ
+    /// ステータスアイコンを生成
     /// </summary>
-    /// <param name="coolTimePanel"></param>
     /// <param name="statusIconPanel"></param>
-    public void SetupIcon(GameObject coolTimePanel, GameObject statusIconPanel)
+    public void InstantiateStatusIcon(GameObject statusIconPanel)
     {
-        //statusIconをセット //GMの方で生成はやってもらう？
         m_statusIcon = Instantiate(m_statusIconPrefab, statusIconPanel.transform).GetComponent<StatusIconController>();
-        //SetStatusIcon(statusIcon.GetComponent<StatusIconController>());
-        base.SetupIcon(coolTimePanel);
     }
 
-    ///// <summary>
-    ///// StatusIconをセット
-    ///// </summary>
-    ///// <param name="statusIconController"></param>
-    //void SetStatusIcon(StatusIconController statusIconController)
-    //{
-    //    m_statusIcon = statusIconController;
-    //}
+    /// <summary>
+    /// ステータスアイコンをセットアップ(player)
+    /// </summary>
+    /// <param name="coolTimePanel"></param>
+    public override void SetupIcon(GameObject coolTimePanel)
+    {
+        base.SetupIcon(coolTimePanel);
+        m_statusIcon.GetComponent<PlayerStatusIconController>().ActInterruptMethod = ActInterrupt;
+    }
 
     /// <summary>
     /// 行動開始(味方)

@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_id: 10
   m_name: "\u30AA\u30FC\u30EB\u30A2\u30BF\u30C3\u30AF"
-  m_info: "\u30AF\u30FC\u30EB70\u3002\n\u5168\u4F53\u306B\u653B\u6483\u529B\xD70.9\u30C0\u30E1\u30FC\u30B8\u3002"
-  m_costSP: 0
+  m_info: "\u6575\u5168\u4F53\u306B0.9\u500D\u30C0\u30E1\u30FC\u30B8\u3092\n\u4E0E\u3048\u308B\u3002"
   m_costTime: 70
   m_renge: 1
   m_damageRate: 0.9

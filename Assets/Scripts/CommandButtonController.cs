@@ -12,14 +12,15 @@ public class CommandButtonController : MonoBehaviour
     static public List<CommandButtonController> OthersCommandButton => m_othersCommandButton;
 
     [SerializeField] TextMeshProUGUI m_commandName = default;
-    [SerializeField] TextMeshProUGUI m_costSP = default;
+    [SerializeField] TextMeshProUGUI m_coolTime = default;
+    //[SerializeField] TextMeshProUGUI m_costSP = default;
     [SerializeField] AudioClip m_selectSE = default;
-    [SerializeField] AudioClip m_ngSE = default;
+    //[SerializeField] AudioClip m_ngSE = default;
 
     //スキル
     SkillDatabase m_currentSkill;
     //行動者
-    BattlePlayerController m_actor;
+    //BattlePlayerController m_actor;
     //テキスト
     TextMeshProUGUI m_commandInfo;
     //アニメ
@@ -39,14 +40,15 @@ public class CommandButtonController : MonoBehaviour
     /// <param name="skill"></param>
     /// <param name="actor"></param>
     /// <param name="text"></param>
-    public void SetupCammand(SkillDatabase skill, BattlePlayerController actor, TextMeshProUGUI text)
+    public void SetupCammand(SkillDatabase skill, /*BattlePlayerController actor,*/ TextMeshProUGUI text)
     {
         //N
         m_currentSkill = skill;
-        m_actor = actor;
+        //m_actor = actor;
         m_commandInfo = text;
         m_commandName.text = skill.Name;
-        m_costSP.text = skill.CostSP.ToString() + "SP";
+        m_coolTime.text = skill.CostTime.ToString();
+        //m_costSP.text = skill.CostSP.ToString() + "SP";
         m_othersCommandButton.Add(this);
     }
 
@@ -79,21 +81,21 @@ public class CommandButtonController : MonoBehaviour
     public void PlayCommand()
     {
         //BattleManager.Instance.BeginTargetSelect(c);
+        BattleManager.Instance.BeginPlayerTargetSelect(m_currentSkill);
 
-        if (m_currentSkill.CostSP <= m_actor.CurrentSP)
-        {
-            BattleManager.Instance.BeginPlayerTargetSelect(m_currentSkill);
+        //if (m_currentSkill.CostSP <= m_actor.CurrentSP)
+        //{
+        //    BattleManager.Instance.BeginPlayerTargetSelect(m_currentSkill);
 
-            //m_actor.SelectSkillTarget(m_currentSkill);
-            //m_currentCommandSkill = skill;
-        }
-        else
-        {
-            BattleManager.Instance.ShowActionText("SPが足りない！");
-            PlaySE(m_ngSE);
-        }
+        //    //m_actor.SelectSkillTarget(m_currentSkill);
+        //    //m_currentCommandSkill = skill;
+        //}
+        //else
+        //{
+        //    BattleManager.Instance.ShowActionText("SPが足りない！");
+        //    PlaySE(m_ngSE);
+        //}
     }
-
 
     /// <summary>
     /// SEを再生

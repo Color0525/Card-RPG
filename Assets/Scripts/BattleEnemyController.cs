@@ -10,12 +10,20 @@ public class BattleEnemyController : BattleStatusControllerBase
     [SerializeField] GameObject m_DeadParticlePrefab = default;
 
     /// <summary>
-    /// 行動(敵)
+    /// 行動(enemy)
     /// </summary>
     public override void BeginAction()
     {
         base.BeginAction();
         EnemyAction();
+    }
+    /// <summary>
+    /// 行動終了（enemy）
+    /// </summary>
+    protected override void EndAction()
+    {
+        ActInterrupt();//できるなら行動割り込み
+        base.EndAction();
     }
 
     /// <summary>
@@ -46,7 +54,6 @@ public class BattleEnemyController : BattleStatusControllerBase
             targets = new BattleStatusControllerBase[] { this };
         }
         UseSkill(skill, targets);
-        // 敵はSP消費なし
         //PlayStateAnimator(m_CurrentSkill);
     }
 

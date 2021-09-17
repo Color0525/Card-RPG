@@ -45,16 +45,15 @@ public class BattleManager : MonoBehaviour
     /// 戦うエネミー
     /// </summary>
     [SerializeField] GameObject[] m_enemyPrefabs;
-    //プレイヤー、エネミーの戦闘ユニットリスト
+    //プレイヤー、エネミー、全ての戦闘ユニットリスト
     [SerializeField] List<BattlePlayerController> m_playerUnits = new List<BattlePlayerController>();
-
     [SerializeField] List<BattleEnemyController> m_enemyUnits = new List<BattleEnemyController>();
     //public List<BattlePlayerController> PlayerUnits => m_playerUnits;
     //public List<BattleEnemyController> EnemyUnits => m_enemyUnits;
-    /// <summary>
-    /// すべての現在戦闘ユニット
-    /// </summary>
     [SerializeField] List<BattleStatusControllerBase> m_allUnits = new List<BattleStatusControllerBase>();
+    //優先して行動するユニット
+    [SerializeField] List<BattleStatusControllerBase> m_priorityUnit = new List<BattleStatusControllerBase>();
+    //コマンド使用者
     BattlePlayerController m_currentCommandActor = default;
     SkillDatabase m_currentCommandSkill = default;
     //List<TargetButtonController> m_currentCommandTargets = new List<TargetButtonController>();
@@ -160,26 +159,49 @@ public class BattleManager : MonoBehaviour
                 {
                     m_timeCount = 0;
 
-                    foreach (var unit in m_allUnits)
+                    //優先ユニットの行動
+                    if (m_priorityUnit.Count > 0)
                     {
-                        if (unit.Alive)
-                        {
-                            //クールタイムはflootにして、0以下になるようにする(状態異常やスキルなどでクール速度半減、倍増、などあるから)
-                            if (unit.CoolTime <= 0)
-                            {
-                                m_battleState = BattleState.InAction;
-                                unit.BeginAction();
-                                return;
-                            }
-                        }
+                        m_battleState = BattleState.InAction;
+                        m_priorityUnit[0].BeginAction();
+                        m_priorityUnit.RemoveAt(0);
+                        return;
                     }
-                    foreach (var unit in m_allUnits)
+
+                    //生きていてクールタイム0以下ユニットの行動
+                    //クールタイムは0以下になるようにする(状態異常やスキルなどでクール速度半減、倍増、などあるから)
+                    BattleStatusControllerBase[] actor = m_allUnits.Where(x => x.Alive).Where(x => x.CoolTime <= 0).ToArray();
+                    if (actor.Length > 0)
                     {
-                        if (unit.Alive)
-                        {
-                            unit.TimeElapsed();
-                        }
+                        m_battleState = BattleState.InAction;
+                        actor[0].BeginAction();
+                        return;
                     }
+
+                    //生きているユニットに時間経過
+                    m_allUnits.Where(x => x.Alive).ToList().ForEach(x => x.TimeElapsed());
+
+                    //foreach (var unit in m_allUnits)
+                    //{
+                    //    if (unit.Alive)
+                    //    {
+
+                    //        if (unit.CoolTime <= 0)
+                    //        {
+                    //            m_battleState = BattleState.InAction;
+                    //            unit.BeginAction();
+                    //            return;
+                    //        }
+                    //    }
+                    //}
+
+                    //foreach (var unit in m_allUnits)
+                    //{
+                    //    if (unit.Alive)
+                    //    {
+                    //        unit.TimeElapsed();
+                    //    }
+                    //}
                 }
 
                 //N//m_allUnits[m_currentNum].StartAction();
@@ -248,7 +270,8 @@ public class BattleManager : MonoBehaviour
         m_coolTimePanel.SetActive(true);//アクティブ
         m_pleyerStatusPanel.SetActive(true);//アクティブ
         m_enemyUnits.ForEach(x => x.SetupIcon(m_coolTimePanel));//アイコンセットアップ
-        m_playerUnits.ForEach(x => x.SetupIcon(m_coolTimePanel, m_pleyerStatusPanel));//アイコンセットアップ
+        m_playerUnits.ForEach(x => x.InstantiateStatusIcon(m_pleyerStatusPanel));//アイコン生成
+        m_playerUnits.ForEach(x => x.SetupIcon(m_coolTimePanel));//アイコンセットアップ
         yield return new WaitForSeconds(Camera.main.gameObject.GetComponent<CinemachineBrain>().m_DefaultBlend.BlendTime);
         m_battleState = BattleState.WaitTime;
     }
@@ -270,6 +293,15 @@ public class BattleManager : MonoBehaviour
         m_battleState = BattleState.WaitTime;
         //m_mainButtleCamera.Follow = m_normalFollowPosition.gameObject.transform;
         //N//StartCoroutine(DelayAndUpdateState(m_delayAtEndTurn, BattleState.EndBattle));//コルーチンやめてEndTurのカウントでディレイをかける
+    }
+
+    /// <summary>
+    /// 優先ユニットに追加
+    /// </summary>
+    /// <param name="unit"></param>
+    public void AddPriorityUnit(BattleStatusControllerBase unit)
+    {
+        m_priorityUnit.Add(unit);
     }
 
     //N
@@ -301,7 +333,7 @@ public class BattleManager : MonoBehaviour
         foreach (var skill in m_currentCommandActor.HavesSkills)
         {
             GameObject go = Instantiate(m_commandButtonPrefab, m_commandArea);
-            go.GetComponent<CommandButtonController>().SetupCammand(skill, m_currentCommandActor, m_commandInfoText);
+            go.GetComponent<CommandButtonController>().SetupCammand(skill, /*m_currentCommandActor,*/ m_commandInfoText);
         }
     }
     /// <summary>
@@ -324,28 +356,29 @@ public class BattleManager : MonoBehaviour
     /// <param name="skill"></param>
     public void BeginPlayerTargetSelect(SkillDatabase skill)
     {
-        EndPlayerCommandSelect();//コマンド非表示
         m_cancelTargetingButton.SetActive(true);//キャンセルボタン表示
+        EndPlayerCommandSelect();//コマンド非表示
 
         m_currentCommandSkill = skill;
 
         if (skill.Renge != SkillDatabase.TargetRenge.myself)
         {
-            
             if (skill.Renge == SkillDatabase.TargetRenge.Single)
             {
-                foreach (var enemy in m_enemyUnits)
-                {
-                    InstantiateTargetButton(enemy, true);
-                }
+                m_enemyUnits.Where(x => x.Alive).ToList().ForEach(x => InstantiateTargetButton(x, true));
+                //foreach (var enemy in m_enemyUnits)
+                //{
+                //    InstantiateTargetButton(enemy, true);
+                //}
                 TargetButtonController.OthersTargetButton.First().SelectTarget();//一番前をture
             }
             else if (skill.Renge == SkillDatabase.TargetRenge.Overall)
             {
-                foreach (var enemy in m_enemyUnits)
-                {
-                    InstantiateTargetButton(enemy, false);
-                }
+                m_enemyUnits.Where(x => x.Alive).ToList().ForEach(x => InstantiateTargetButton(x, false));
+                //foreach (var enemy in m_enemyUnits)
+                //{
+                //    InstantiateTargetButton(enemy, false);
+                //}
                 TargetButtonController.OthersTargetButton.ForEach(x => x.SelectTarget()); //すべてture
             }
         }

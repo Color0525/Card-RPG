@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,29 +9,43 @@ using UnityEngine.UI;
 /// <summary>
 /// プレイヤーのステータスアイコンを操作
 /// </summary>
-public class PlayerStatusController : StatusIconController
+public class PlayerStatusIconController : StatusIconController
 {
     [SerializeField] TextMeshProUGUI m_HPValue = default;
-    [SerializeField] TextMeshProUGUI m_GuardValue = default;
-    [SerializeField] TextMeshProUGUI m_SPValue = default;
+    [SerializeField] TextMeshProUGUI m_guardValue = default;
+    //[SerializeField] TextMeshProUGUI m_SPValue = default;
+    Action m_actInterruptMethod = default;
+    public Action ActInterruptMethod { get { return m_actInterruptMethod; } set { m_actInterruptMethod = value; } }
+
 
     public override void Awake()
     {
         //m_coolTimeBarPanel = GameObject.FindWithTag("PlayersCoolTimeBar").transform;
     }
 
+    ///// <summary>
+    ///// ステータスアイコンのセットアップ(Player)
+    ///// </summary>
+    ///// <param name="status"></param>
+    ///// <param name="coolTimePanel"></param>
+    //public void SetupStatus(BattleStatusControllerBase status, GameObject coolTimePanel, Action clickEffect)
+    //{
+    //    UpdateHPBar(status.MaxHP, status.CurrentHP);
+    //    UpdateGuardBar(status.MaxGuard, status.CurrentGuard);
+    //    //UpdateSPBar(status.MaxSP, status.CurrentSP);
+
+    //    //クールタイムバーを生成
+
+    //    UpdateCoolTimeBar(status.CoolTime);
+    //}
+
     /// <summary>
-    /// ステータスアイコンのセットアップ(Player)
+    /// クールタイムバーを生成(player)
     /// </summary>
     /// <param name="status"></param>
     /// <param name="coolTimePanel"></param>
-    public override void SetupStatus(BattleStatusControllerBase status, GameObject coolTimePanel)
+    protected override void InstantiateCoolTimeBar(BattleStatusControllerBase status, GameObject coolTimePanel)
     {
-        UpdateHPBar(status.MaxHP, status.CurrentHP);
-        UpdateGuardBar(status.MaxGuard, status.CurrentGuard);
-        UpdateSPBar(status.MaxSP, status.CurrentSP);
-
-        //m_coolTimeBarPanel = GameObject.FindWithTag("PlayersCoolTimeBar").transform;
         GameObject go = Instantiate(m_coolTimeBarPrefab, coolTimePanel.transform.Find("Players"));
         m_coolTimeBar = go.GetComponent<Slider>();
         m_coolTimeValue = go.GetComponentInChildren<TextMeshProUGUI>();//valueを参照
@@ -40,7 +55,14 @@ public class PlayerStatusController : StatusIconController
             if (child.name == "Frame") child.color = Color.green;//枠の色を変える(playerは緑) 
             else if (child.name == "UnitImage") child.sprite = status.CoolTimeIcon;//そのユニットのイメージに
         }
-        UpdateCoolTimeBar(status.CoolTime);
+    }
+
+    /// <summary>
+    /// 行動割り込みを使う
+    /// </summary>
+    public void UseActInterrupt()
+    {
+        m_actInterruptMethod();
     }
 
     /// <summary>
@@ -77,22 +99,22 @@ public class PlayerStatusController : StatusIconController
         //0になった時ガラスが割れるような演出追加？
 
         //値を現在値までなめらかに変化させる
-        DOTween.To(() => int.Parse(m_GuardValue.text), x => m_GuardValue.text = x.ToString(), currentGuard, m_effectTime);
+        DOTween.To(() => int.Parse(m_guardValue.text), x => m_guardValue.text = x.ToString(), currentGuard, m_effectTime);
     }
 
-    /// <summary>
-    /// SPBarを更新(Player)
-    /// </summary>
-    /// <param name="maxSP"></param>
-    /// <param name="currentSP"></param>
-    public override void UpdateSPBar(int maxSP, int currentSP)
-    {
-        //バーが飛び出すアニメ
-        m_SPBar.transform.DOScale(new Vector3(1.5f, 0.9f, 1), 0.05f);
-        base.UpdateSPBar(maxSP, currentSP);
-        m_SPBar.transform.DOScale(1f, 0.1f).SetDelay(m_effectTime);
+    ///// <summary>
+    ///// SPBarを更新(Player)
+    ///// </summary>
+    ///// <param name="maxSP"></param>
+    ///// <param name="currentSP"></param>
+    //public override void UpdateSPDisplay(int maxSP, int currentSP)
+    //{
+    //    //バーが飛び出すアニメ
+    //    m_SPBar.transform.DOScale(new Vector3(1.5f, 0.9f, 1), 0.05f);
+    //    base.UpdateSPBar(maxSP, currentSP);
+    //    m_SPBar.transform.DOScale(1f, 0.1f).SetDelay(m_effectTime);
 
-        //値を現在値までなめらかに変化させる
-        DOTween.To(() => int.Parse(m_SPValue.text), x => m_SPValue.text = x.ToString(), currentSP, m_effectTime);
-    }
+    //    //値を現在値までなめらかに変化させる
+    //    DOTween.To(() => int.Parse(m_SPValue.text), x => m_SPValue.text = x.ToString(), currentSP, m_effectTime);
+    //}
 }

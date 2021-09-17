@@ -29,7 +29,7 @@ public class SkillDatabase : ScriptableObject
     [SerializeField] ID m_id = default;
     [SerializeField] string m_name = "None";
     [SerializeField] [Multiline(4)] string m_info = default;
-    [SerializeField] int m_costSP = 0;
+    //[SerializeField] int m_costSP = 0;
     [SerializeField] int m_costTime = 100;
     [SerializeField] TargetRenge m_renge = default;
 
@@ -48,7 +48,7 @@ public class SkillDatabase : ScriptableObject
     //get,set
     public string Name { get { return m_name; } }
     public string Info { get { return m_info; } }
-    public int CostSP { get { return m_costSP; } }
+    //public int CostSP { get { return m_costSP; } }
     public int CostTime { get { return m_costTime; } }
     public TargetRenge Renge { get { return m_renge; } }
     public string StateName { get { return m_stateName; } }
@@ -86,7 +86,6 @@ public class SkillDatabase : ScriptableObject
             //int a = Mathf.FloorToInt(actor.FuncAttackPowerRate(actor.AttackPower));
             target.Damage(target.GetReceiveDamage(actor.AttackPower * m_damageRate, actor.TotalAttackPower));//使用者がtargetにm_powerRateでダメージを与える関数
             //あるなら追加効果
-            //UseSkill
         }
     }
 
@@ -118,12 +117,5 @@ public class SkillDatabase : ScriptableObject
         {
             target.AddStatesEffect(new Poison(target, m_effectTime));
         }
-    }
-
-    void UseSkill(BattleStatusControllerBase actor)//これはunit側で
-    {
-        //クールを増やす　//user.UseSP();
-        //m_battleManager.ActionText(m_name); //スキル名を表示
-        //m_anim.Play(skill.m_StateName);//アニメーション起動
     }
 }

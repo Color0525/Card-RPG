@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_id: 10
   m_name: "\u30A2\u30BF\u30C3\u30AF"
-  m_info: "\u30AF\u30FC\u30EB50\u3002\n\u653B\u6483\u529B\xD71.0\u30C0\u30E1\u30FC\u30B8\u3002"
-  m_costSP: 0
+  m_info: "\u65751\u4F53\u306B1.0\u500D\u30C0\u30E1\u30FC\u30B8\u3092\n\u4E0E\u3048\u308B\u3002"
   m_costTime: 50
-  m_powerRate: 1
-  m_falterPower: 0
+  m_renge: 0
+  m_damageRate: 1
+  m_breakPower: 0
   m_effectTime: -1
   m_effectRete: 0
   m_stateName: Attack
