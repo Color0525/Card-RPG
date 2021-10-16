@@ -22870,8 +22870,6 @@ MonoBehaviour:
   m_timeUpdateInterval: 0.05
   m_playerPrefabs:
   - {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2, type: 3}
-  - {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2, type: 3}
-  - {fileID: 6668329273356992691, guid: d6468af2619692944aa0747b2c2d61f2, type: 3}
   m_enemyPrefabs:
   - {fileID: 4375224791195816608, guid: c664c7e635c405642bf72919c909ed66, type: 3}
   - {fileID: 4993672648434196426, guid: edcdafc91e0baea4cbd2476524a8d456, type: 3}

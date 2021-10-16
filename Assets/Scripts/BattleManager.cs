@@ -384,13 +384,13 @@ public class BattleManager : MonoBehaviour
                 //{
                 //    InstantiateTargetButton(enemy, false);
                 //}
-                TargetButtonController.OthersTargetButton.ForEach(x => x.SelectTarget()); //すべてture
+                //TargetButtonController.OthersTargetButton.ForEach(x => x.SelectTarget()); //すべてture
             }
         }
         else
         {
             InstantiateTargetButton(m_currentActor, false);
-            TargetButtonController.OthersTargetButton.First().SelectTarget();//一つをture
+            //TargetButtonController.OthersTargetButton.First().SelectTarget();//一つをture
         }
     }
     /// <summary>
@@ -431,6 +431,7 @@ public class BattleManager : MonoBehaviour
         //ターゲットボタンの削除
         TargetButtonController.OthersTargetButton.ForEach(x => Destroy(x.gameObject));
         TargetButtonController.OthersTargetButton.Clear();
+
         //m_currentCommandTargets.ForEach(x => Destroy(x.gameObject));
         //m_currentCommandTargets.Clear();
     }
