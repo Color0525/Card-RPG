@@ -57,6 +57,16 @@ public class SkillDatabase : ScriptableObject
 
     private void OnValidate()
     {
+        SetEffectEvent();
+    }
+
+    private void Awake()
+    {
+        SetEffectEvent();
+    }
+
+    void SetEffectEvent()
+    {
         switch (m_id)
         {
             case ID.Attack:

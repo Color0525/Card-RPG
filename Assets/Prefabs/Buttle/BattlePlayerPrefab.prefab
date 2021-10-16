@@ -691,8 +691,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_name: "\u30E6\u30CB\u30C6\u30A3\u3061\u3083\u3093"
-  m_maxHP: 150
-  m_currentHP: 150
+  m_maxHP: 200
+  m_currentHP: 200
   m_maxGuard: 100
   m_currentGuard: 100
   m_actionPoint: 0

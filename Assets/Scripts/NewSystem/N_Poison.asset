@@ -15,11 +15,11 @@ MonoBehaviour:
   m_id: 150
   m_name: "\u30DD\u30A4\u30BA\u30F3"
   m_info: "\u65751\u4F53\u3092\u6BD2\u72B6\u614B\u306B\u3059\u308B\u3002\n\u6BD2\uFF1A10\u30AB\u30A6\u30F3\u30C8\u6BCE\u306B\n\u6700\u5927\u4F53\u529B5%\u5206\u306E\n\u30C0\u30E1\u30FC\u30B8\u3092\u53D7\u3051\u308B\u3002"
-  m_costTime: 90
+  m_costTime: 140
   m_renge: 0
   m_damageRate: 1
   m_breakPower: 0
-  m_effectTime: 100
+  m_effectTime: 50
   m_effectRete: 0
   m_hitEffectPrefab: {fileID: 100004, guid: 6262cca62edcc6a4a9e4fdc76209de03, type: 3}
   m_stateName: Attack

@@ -11574,7 +11574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mapSceneName: Map
-  m_battleSceneName: Battle
+  m_battleSceneName: NewBattle
   m_fadePanelPrefab: {fileID: 2338664709169822662, guid: 827c5abf4d8e4a648bfab575686c1dfb,
     type: 3}
   m_fadeTime: 1

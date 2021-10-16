@@ -232,8 +232,8 @@ MonoBehaviour:
   m_currentGuard: 100
   m_actionPoint: 0
   m_coolTime: 0
-  m_attackPower: 20
-  m_defensePower: 15
+  m_attackPower: 15
+  m_defensePower: 10
   m_havesSkills:
   - {fileID: 11400000, guid: f1e1c3bfe34637c449d9a63e4c93d4cf, type: 2}
   - {fileID: 11400000, guid: ebb8bcf936f806945bffa767bc8343bd, type: 2}
