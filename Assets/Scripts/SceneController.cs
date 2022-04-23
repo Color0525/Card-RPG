@@ -9,10 +9,10 @@ using UnityEngine.UI;
 /// </summary>
 public class SceneController : MonoBehaviour
 {
-    /// <summary>
-    /// シーン唯一のSceneController
-    /// </summary>
-    public static SceneController m_Instance { get; private set; }
+    //シーン唯一のシングルトンSceneController
+    static SceneController m_instance;
+    static public SceneController Instance => m_instance;
+
 
     //BattleScene移行用戦闘キャラ情報
     public GameObject[] m_PlayerPrefabs { get; private set; }
@@ -40,13 +40,13 @@ public class SceneController : MonoBehaviour
     void Awake()
     {
         //シーンをまたぐSceneControllerを唯一にする
-        if (m_Instance != null)
+        if (m_instance != null)
         {
             Destroy(gameObject);
         }
         else
         {
-            m_Instance = this;
+            m_instance = this;
             DontDestroyOnLoad(gameObject);
 
             //初期クエストをセット
